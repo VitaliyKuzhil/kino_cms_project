@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig'  # Add new application into the project
+    'core.apps.CoreConfig',  # Add new application into the project
+    'cinema.apps.CinemaConfig'  # Add new application into the project
 ]
 
 MIDDLEWARE = [
