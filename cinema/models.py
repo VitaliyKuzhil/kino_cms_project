@@ -1,4 +1,5 @@
 from django.db import models
+from .constants import StatusMovieChoices
 
 
 class Seo(models.Model):  # Model SEO
@@ -31,7 +32,7 @@ class Cinemas(models.Model):  # Model Cinemas
     description_cinema = models.TextField(null=True, blank=True)
     logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
     main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    amenities_cinema = models.CharField(max_length=500, null=True, blank=True)
+    amenities_cinema = models.TextField(null=True, blank=True)
     gallery_cinema = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
     seo_cinema = models.OneToOneField(Seo, on_delete=models.CASCADE, blank=True, null=True)
     data_create_cinema = models.DateTimeField(auto_now_add=True, null=False, blank=False)
@@ -87,9 +88,10 @@ class Movies(models.Model):  # Model Movies
     id_movie = models.AutoField(primary_key=True)
     name_movie = models.CharField(max_length=300, null=False, blank=False)
     description_movie = models.TextField(null=True, blank=True)
-    type_movie = models.CharField(max_length=70, null=False, blank=False)
+    type_movie = models.ManyToManyField('TypeMovie', null=False, blank=False)
     main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    status_movie = models.CharField(max_length=50, null=True, blank=True)
+    status_movie = models.CharField(max_length=50, null=True, blank=True,
+                                    choices=StatusMovieChoices.choices, default=StatusMovieChoices.SOON)
     url_movie = models.URLField(max_length=300, null=True, blank=True)
     gallery_movie = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True)
     seo_movie = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True)
@@ -102,3 +104,11 @@ class Movies(models.Model):  # Model Movies
         verbose_name = 'Movie'
         verbose_name_plural = 'Movies'
         ordering = ['name_movie']
+
+
+class TypeMovie(models.Model):  # Model TypeMovie
+    id_type_movie = models.AutoField(primary_key=True)
+    type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.type

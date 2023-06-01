@@ -8,7 +8,7 @@ class Pages(models.Model):  # Model Pages
     name_page = models.CharField(max_length=50, null=False, blank=False)
     gallery_page = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True)
     seo_page = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True)
-    status_page = models.BooleanField(default=False, null=False, blank=False)
+    status_page = models.BooleanField(default=True, null=False, blank=False)
     data_create_page = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self):
@@ -29,10 +29,10 @@ class HomePage(Pages):  # Model HomePage
         return self.name_page
 
 
-class NewsSharesPage(models.Model):  # Abstract Model NewsSharesPage
+class NewsSharesPage(models.Model):  # Model NewsSharesPage
     id_news_shares = models.AutoField(primary_key=True)
     id_main_page = models.ForeignKey(Pages, on_delete=models.CASCADE, null=False, blank=False)
-    type_page = models.CharField(max_length=50, null=False, blank=False)
+    type_page = models.CharField('TypePage', null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
     url_address = models.URLField(max_length=300, null=True, blank=True)
@@ -40,6 +40,14 @@ class NewsSharesPage(models.Model):  # Abstract Model NewsSharesPage
 
     class Meta:
         abstract = True
+
+
+class TypePage(models.Model):  # Model TypePage
+    id_type_page = models.AutoField(primary_key=True)
+    type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.type
 
 
 class NewsPage(NewsSharesPage):  # Model NewsPage
@@ -98,7 +106,7 @@ class ContactPage(Pages):  # Model ContactPage
 class Banners(models.Model):  # Abstract Model Banners
     id_banner = models.AutoField(primary_key=True)
     name_banner = models.CharField(max_length=50, null=False, blank=False)
-    status_banner = models.CharField(max_length=50, null=False, blank=False) # choice
+    status_banner = models.BooleanField(default=True, null=False, blank=False)
 
     def __str__(self):
         return f'Banner: {self.name_banner}'
