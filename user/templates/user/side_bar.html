@@ -1,0 +1,29 @@
+{% for item in side_bar %}
+    {% if item.list %}
+        <li class="nav-item has-treeview menu-open">
+            <a class="nav-link dropdown-toggle">
+                <p>{{ item.title }}
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                {% for name, url in item.list.items %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>{{ name }}</p>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link">
+                <p>
+                    {{ item.title }}
+                </p>
+            </a>
+        </li>
+    {% endif %}
+{% endfor %}

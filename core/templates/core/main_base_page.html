@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Include static -->
+    {% load static %}
+
+    <!-- Block title -->
+    <title>{% block title %}{% endblock title %}</title>
+
+    <!-- Links to static files -->
+    <link rel="stylesheet" href="{% static 'core/plugins/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'core/dist/css/adminlte.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body>
+    <!-- Block menu -->
+    {% block menu %}{% endblock menu %}
+
+    <!-- Block content -->
+    {% block content %}{% endblock content %}
+
+    <!-- Links to scripts static files -->
+    <script src="{% static 'core/plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'core/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'core/dist/js/adminlte.min.js' %}"></script>
+</body>
+<footer>
+    <!-- Block footer -->
+    {% block footer %}{% endblock footer %}
+</footer>
+</html>
