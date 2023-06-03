@@ -2,15 +2,16 @@
 {% load static %}
 {% load admin_menu_tags %}
 
+
 <!-- Block title -->
 <title>{% block title %}Base Admin{% endblock title %}</title>
 
 <!-- Block menu -->
 {% block menu %}
     <!-- Sidebar -->
-    <aside class="main-sidebar sidebar-light-blue elevation-4">
+    <aside class="main-sidebar sidebar-dark-secondary elevation-4">
         <!-- Brand Logo -->
-        <a href="#" class="brand-link">
+        <a href="{% url 'user:statistic' %}" class="brand-link">
             <img src="{% static 'core/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
                  class="brand-image img-circle elevation-3"
                  style="opacity: .8">
@@ -20,10 +21,7 @@
         <div class="sidebar">
             <!-- Sidebar Menu -->
             <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                    data-accordion="false">
-                    {% side_bar %}
-                </ul>
+                    {% render_menu_items %}
             </nav>
 
         </div>

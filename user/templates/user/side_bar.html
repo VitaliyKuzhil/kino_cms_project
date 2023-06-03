@@ -1,29 +1,12 @@
-{% for item in side_bar %}
-    {% if item.list %}
-        <li class="nav-item has-treeview menu-open">
-            <a class="nav-link dropdown-toggle">
-                <p>{{ item.title }}
-                    <i class="right fas fa-angle-left"></i>
-                </p>
-            </a>
-            <ul class="nav nav-treeview">
-                {% for name, url in item.list.items %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>{{ name }}</p>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </li>
-    {% else %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
+    {% for item in menu_items %}
         <li class="nav-item">
-            <a class="nav-link">
-                <p>
-                    {{ item.title }}
-                </p>
+            <a href="{% url item.url %}" class="nav-link">
+                <i class="fas {{ item.icon }}"></i>
+                <p>{{ item.title }}</p>
             </a>
         </li>
-    {% endif %}
-{% endfor %}
+    {% endfor %}
+</ul>

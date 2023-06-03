@@ -12,7 +12,7 @@
             <div class="row row-cols-auto">
                 <div class="col">
                     <!-- Brand Logo -->
-                    <a href="{% url 'base_user' %}" class="navbar-brand">Brand</a>
+                    <a href="{% url 'cinema:home_page' %}" class="navbar-brand">Brand</a>
                     <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
                             data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
@@ -21,9 +21,7 @@
                 <!-- Menu Items -->
                 <div class="col">
                     <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <ul class="navbar-nav ms-auto">
                             {% nav_bar %}
-                        </ul>
                     </div>
                 </div>
                 <!-- Authenticated -->

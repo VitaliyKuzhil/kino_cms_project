@@ -1,22 +1,22 @@
-{% for item in nav_bar %}
-    {% if item.list %}
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-                {{ item.title }}
-            </a>
-
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% for name, url in item.list.items %}
-                    <a class="dropdown-item" href="#">{{ name }}</a>
-                {% endfor %}
-            </div>
-        </li>
-    {% else %}
-        <li class="nav-item">
-            <a href="#" class="nav-link">
+<ul class="navbar-nav ms-auto">
+    {% for item in nav_bar %}
+        {% if not item.list %}
+            <li class="nav-item">
+                <a href="{% url item.url %}" class="nav-link">
                     {{ item.title }}
-            </a>
-        </li>
-    {% endif %}
-{% endfor %}
+                </a>
+            </li>
+        {% else %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"
+                   href="#">{{ item.title }}</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for sub_item in item.list %}
+                        <a class="dropdown-item" href="{% url sub_item.url %}">{{ sub_item.title }}</a>
+                    {% endfor %}
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
