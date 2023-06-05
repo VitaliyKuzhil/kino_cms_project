@@ -41,8 +41,8 @@
                                 </li>
                                 {% else %}
                                 <li class="nav-item">
-                                    <a href="{% url 'user/profile' %}" class="nav-link">
-                                        request.user.first_name
+                                    <a href="{% url 'user:profile' %}" class="nav-link">
+                                        {{ request.user.first_name }}
                                     </a>
                                 </li>
                                 <li class="nav-item">
