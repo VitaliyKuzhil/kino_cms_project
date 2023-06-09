@@ -12,6 +12,9 @@ class Seo(models.Model, UrlValidatorMixin):  # Model SEO
                                     help_text='Input keywords SEO')
     description_seo = models.TextField(null=True, blank=True, help_text='Input description SEO')
 
+    def __str__(self):
+        return f'{self.title_seo}'
+
     def clean(self):
         super().clean()
         self.validate_url(self.url_seo)
@@ -20,16 +23,23 @@ class Seo(models.Model, UrlValidatorMixin):  # Model SEO
 class Gallery(models.Model):  # Model Gallery
     name_gallery = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Gallery')
 
+    def __str__(self):
+        return f'{self.name_gallery}'
+
 
 class Photos(models.Model, PhotoValidatorMixin):  # Model Photo
     gallery = models.ManyToManyField(Gallery, through='GalleryPhotos', help_text='Select Gallery')
-    photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False,
+    photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/',
                               help_text='Upload an image. Supported formats: JPEG, PNG')
 
     def clean(self):
         super().clean()
         self.validate_file_extension(self.photo)
         self.validate_file_size(self.photo)
+
+    class Meta:
+        verbose_name = 'photo'
+        verbose_name_plural = 'photos'
 
 
 class GalleryPhotos(models.Model):  # Connection ManyToMany between Gallery and Photos
@@ -40,9 +50,9 @@ class GalleryPhotos(models.Model):  # Connection ManyToMany between Gallery and 
 class Cinemas(models.Model, PhotoValidatorMixin):  # Model Cinemas
     name_cinema = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Cinema')
     description_cinema = models.TextField(null=True, blank=True, help_text='Input description Cinema')
-    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, blank=True, null=True,
+    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
                                     help_text='Upload an image. Supported formats: JPEG, PNG')
-    main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+    main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
                                          help_text='Upload an image. Supported formats: JPEG, PNG')
     amenities_cinema = models.TextField(null=True, blank=True, help_text='Input amenities Cinema')
     gallery_cinema = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
@@ -71,9 +81,9 @@ class Halls(models.Model, PhotoValidatorMixin, CounterValidatorMixin):  # Model 
     cinema_hall = models.ForeignKey(Cinemas, on_delete=models.CASCADE, help_text='Select Cinema to Hall')
     number_hall = models.IntegerField(default=1, help_text='Input number hall')
     description_hall = models.TextField(null=True, blank=True, help_text='Input description hall')
-    photo_shem_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+    photo_shem_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
                                         help_text='Upload an image. Supported formats: JPEG, PNG')
-    main_foto_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+    main_foto_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
                                        help_text='Upload an image. Supported formats: JPEG, PNG')
     count_seats_hall = models.IntegerField(default=1, blank=True, null=True, help_text='Input count seats into hall')
     gallery_hall = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
@@ -120,7 +130,7 @@ class Movies(models.Model, PhotoValidatorMixin, UrlValidatorMixin):  # Model Mov
     description_movie = models.TextField(null=True, blank=True, help_text='Input description Movie')
     type_movie = models.CharField(choices=TypeMovieChoices.choices, validators=[MovieValidator.validate_check_type],
                                   help_text='Check type Movie')
-    main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+    main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
                                         help_text='Upload an image. Supported formats: JPEG, PNG')
     status_movie = models.CharField(null=True, blank=True,
                                     choices=StatusMovieChoices.choices, default=StatusMovieChoices.SOON,
