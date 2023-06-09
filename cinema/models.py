@@ -1,24 +1,35 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
-from .constants import StatusMovieChoices
+from .constants import StatusMovieChoices, TypeMovieChoices
+from core.untils.cinema_validator import SeoValidator, MovieValidator
+from core.untils.universal_validator import PhotoValidatorMixin, UrlValidatorMixin, CounterValidatorMixin
 
 
-class Seo(models.Model):  # Model SEO
-    id_seo = models.AutoField(primary_key=True)
-    url_seo = models.URLField(max_length=300, null=True, blank=True)
-    title_seo = models.CharField(max_length=300, null=False, blank=False)
-    keywords_seo = models.CharField(max_length=400, null=False, blank=False)
-    description_seo = models.TextField(null=True, blank=True)
+class Seo(models.Model, UrlValidatorMixin):  # Model SEO
+    url_seo = models.URLField(null=True, blank=True, help_text='Input url address SEO')
+    title_seo = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input title SEO')
+    keywords_seo = models.CharField(max_length=400, validators=[SeoValidator.validate_keywords],
+                                    help_text='Input keywords SEO')
+    description_seo = models.TextField(null=True, blank=True, help_text='Input description SEO')
+
+    def clean(self):
+        super().clean()
+        self.validate_url(self.url_seo)
 
 
 class Gallery(models.Model):  # Model Gallery
-    id_gallery = models.AutoField(primary_key=True)
-    name_gallery = models.CharField(max_length=300, null=False, blank=False, unique=True)
+    name_gallery = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Gallery')
 
 
-class Photos(models.Model):  # Model Photo
-    id_photo = models.AutoField(primary_key=True)
-    gallery = models.ManyToManyField(Gallery, through='GalleryPhotos', null=True, blank=True)
-    photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False)
+class Photos(models.Model, PhotoValidatorMixin):  # Model Photo
+    gallery = models.ManyToManyField(Gallery, through='GalleryPhotos', help_text='Select Gallery')
+    photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False,
+                              help_text='Upload an image. Supported formats: JPEG, PNG')
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.photo)
+        self.validate_file_size(self.photo)
 
 
 class GalleryPhotos(models.Model):  # Connection ManyToMany between Gallery and Photos
@@ -26,57 +37,77 @@ class GalleryPhotos(models.Model):  # Connection ManyToMany between Gallery and 
     photos = models.ForeignKey(Photos, on_delete=models.CASCADE)
 
 
-class Cinemas(models.Model):  # Model Cinemas
-    id_cinema = models.AutoField(primary_key=True)
-    name_cinema = models.CharField(max_length=300, null=False, blank=False)
-    description_cinema = models.TextField(null=True, blank=True)
-    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    amenities_cinema = models.TextField(null=True, blank=True)
-    gallery_cinema = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
-    seo_cinema = models.OneToOneField(Seo, on_delete=models.CASCADE, blank=True, null=True)
-    data_create_cinema = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+class Cinemas(models.Model, PhotoValidatorMixin):  # Model Cinemas
+    name_cinema = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Cinema')
+    description_cinema = models.TextField(null=True, blank=True, help_text='Input description Cinema')
+    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, blank=True, null=True,
+                                    help_text='Upload an image. Supported formats: JPEG, PNG')
+    main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                         help_text='Upload an image. Supported formats: JPEG, PNG')
+    amenities_cinema = models.TextField(null=True, blank=True, help_text='Input amenities Cinema')
+    gallery_cinema = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                          help_text='Select Gallery')
+    seo_cinema = models.OneToOneField(Seo, on_delete=models.CASCADE, blank=True, null=True,
+                                      help_text='Select SEO')
+    data_create_cinema = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.logo_cinema)
+        self.validate_file_extension(self.main_foto_cinema)
+        self.validate_file_size(self.logo_cinema)
+        self.validate_file_size(self.main_foto_cinema)
 
     def __str__(self):
-        return f'Cinema: {self.name_cinema}'
+        return f'{self.name_cinema}'
 
     class Meta:
-        verbose_name = 'Cinema'
-        verbose_name_plural = 'Cinemas'
+        verbose_name = 'cinema'
+        verbose_name_plural = 'cinemas'
         ordering = ['name_cinema']
 
 
-class Halls(models.Model):  # Model Halls
-    id_hall = models.AutoField(primary_key=True)
-    cinema_hall = models.ForeignKey(Cinemas, on_delete=models.CASCADE, blank=False, null=False)
-    number_hall = models.IntegerField(default=1, blank=False, null=False)
-    description_hall = models.TextField(null=True, blank=True)
-    photo_shem_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    main_foto_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    count_seats_hall = models.IntegerField(default=1, blank=True, null=True)
-    gallery_hall = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
-    seo_hall = models.OneToOneField(Seo, on_delete=models.CASCADE, blank=True, null=True)
-    data_create_hall = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+class Halls(models.Model, PhotoValidatorMixin, CounterValidatorMixin):  # Model Halls
+    cinema_hall = models.ForeignKey(Cinemas, on_delete=models.CASCADE, help_text='Select Cinema to Hall')
+    number_hall = models.IntegerField(default=1, help_text='Input number hall')
+    description_hall = models.TextField(null=True, blank=True, help_text='Input description hall')
+    photo_shem_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                        help_text='Upload an image. Supported formats: JPEG, PNG')
+    main_foto_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                       help_text='Upload an image. Supported formats: JPEG, PNG')
+    count_seats_hall = models.IntegerField(default=1, blank=True, null=True, help_text='Input count seats into hall')
+    gallery_hall = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                        help_text='Select Gallery')
+    seo_hall = models.OneToOneField(Seo, on_delete=models.CASCADE, blank=True, null=True,
+                                    help_text='Select SEO')
+    data_create_hall = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.photo_shem_hall)
+        self.validate_file_extension(self.main_foto_hall)
+        self.validate_file_size(self.photo_shem_hall)
+        self.validate_file_size(self.main_foto_hall)
+        self.count_integer(self.number_hall)
+        self.count_integer(self.count_seats_hall)
 
     def __str__(self):
-        return f'Hall: {self.number_hall}'
+        return f'{self.number_hall}'
 
     class Meta:
-        verbose_name = 'Hall'
-        verbose_name_plural = 'Halls'
+        verbose_name = 'hall'
+        verbose_name_plural = 'halls'
         ordering = ['number_hall']
 
 
 class Rows(models.Model):  # Model Rows
-    id_row = models.AutoField(primary_key=True)
-    row_hall = models.ForeignKey(Halls, on_delete=models.CASCADE, blank=False,
-                                 null=False)  # Connection ForeignKey between Halls and Rows
+    row_hall = models.ForeignKey(Halls, on_delete=models.CASCADE,
+                                 help_text='Select Hall to Row')  # Connection ForeignKey between Halls and Rows
 
 
 class Seats(models.Model):  # Model Seats
-    id_seat = models.AutoField(primary_key=True)
-    seat_row = models.ManyToManyField(Rows, through='SeatsRows', null=False, blank=False)
-    status_seat = models.BooleanField(default=False, blank=True, null=True)
+    seat_row = models.ManyToManyField(Rows, through='SeatsRows', help_text='Select Row to Seat')
+    status_seat = models.BooleanField(default=False, help_text='Select status Seat')
 
 
 class SeatsRows(models.Model):  # Connection ManyToMany between Rows and Seats
@@ -84,31 +115,33 @@ class SeatsRows(models.Model):  # Connection ManyToMany between Rows and Seats
     row = models.ForeignKey(Rows, on_delete=models.CASCADE)
 
 
-class Movies(models.Model):  # Model Movies
-    id_movie = models.AutoField(primary_key=True)
-    name_movie = models.CharField(max_length=300, null=False, blank=False)
-    description_movie = models.TextField(null=True, blank=True)
-    type_movie = models.ManyToManyField('TypeMovie', null=False, blank=False)
-    main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    status_movie = models.CharField(max_length=50, null=True, blank=True,
-                                    choices=StatusMovieChoices.choices, default=StatusMovieChoices.SOON)
-    url_movie = models.URLField(max_length=300, null=True, blank=True)
-    gallery_movie = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True)
-    seo_movie = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True)
-    data_create_movie = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+class Movies(models.Model, PhotoValidatorMixin, UrlValidatorMixin):  # Model Movies
+    name_movie = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Movie')
+    description_movie = models.TextField(null=True, blank=True, help_text='Input description Movie')
+    type_movie = models.CharField(choices=TypeMovieChoices.choices, validators=[MovieValidator.validate_check_type],
+                                  help_text='Check type Movie')
+    main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                        help_text='Upload an image. Supported formats: JPEG, PNG')
+    status_movie = models.CharField(null=True, blank=True,
+                                    choices=StatusMovieChoices.choices, default=StatusMovieChoices.SOON,
+                                    help_text='Select status Movie')
+    url_movie = models.URLField(max_length=300, null=True, blank=True, help_text='Input url Movie')
+    gallery_movie = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True,
+                                         help_text='Select Gallery')
+    seo_movie = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True,
+                                     help_text='Select SEO')
+    data_create_movie = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_foto_movie)
+        self.validate_file_size(self.main_foto_movie)
+        self.validate_url(self.url_movie)
 
     def __str__(self):
-        return f'Movie: {self.name_movie}'
+        return f'{self.name_movie}'
 
     class Meta:
-        verbose_name = 'Movie'
-        verbose_name_plural = 'Movies'
+        verbose_name = 'movie'
+        verbose_name_plural = 'movies'
         ordering = ['name_movie']
-
-
-class TypeMovie(models.Model):  # Model TypeMovie
-    id_type_movie = models.AutoField(primary_key=True)
-    type = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.type
