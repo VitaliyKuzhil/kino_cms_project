@@ -1,53 +1,62 @@
+"""from django.core.validators import MinLengthValidator
 from django.db import models
 from cinema.models import Seo, Gallery
 from datetime import datetime
+from core.constants import TypePageChoices
+from core.untils.universal_validator import PhotoValidatorMixin, UrlValidatorMixin, CounterValidatorMixin
 
 
-class Pages(models.Model):  # Model Pages
-    id_page = models.AutoField(primary_key=True)
-    name_page = models.CharField(max_length=50, null=False, blank=False)
-    gallery_page = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True)
-    seo_page = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True)
-    status_page = models.BooleanField(default=True, null=False, blank=False)
+class Pages(models.Model, PhotoValidatorMixin):  # Model Pages
+    name_page = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False,
+                                 help_text='Input name Page')
+    gallery_page = models.OneToOneField(Gallery, on_delete=models.CASCADE, null=True, blank=True,
+                                        help_text='Select Gallery to Page')
+    seo_page = models.OneToOneField(Seo, on_delete=models.CASCADE, null=True, blank=True,
+                                    help_text='Select SEO to Page')
+    status_page = models.BooleanField(default=True, null=False, blank=False, help_text='Select status page')
     data_create_page = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self):
-        return f'Page: {self.name_page}'
+        return f'{self.name_page}'
 
     class Meta:
-        verbose_name = 'Page'
-        verbose_name_plural = 'Pages'
+        verbose_name = 'page'
+        verbose_name_plural = 'pages'
         ordering = ['data_create_page']
 
 
 class HomePage(Pages):  # Model HomePage
-    id_home_page = models.AutoField(primary_key=True)
-    photo1 = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    photo2 = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+    photo1 = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                               help_text='Upload an image. Supported formats: JPEG, PNG')
+    photo2 = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                               help_text='Upload an image. Supported formats: JPEG, PNG')
 
-    def __str__(self):
-        return self.name_page
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.photo1)
+        self.validate_file_size(self.photo1)
+        self.validate_file_extension(self.photo2)
+        self.validate_file_size(self.photo2)
 
 
-class NewsSharesPage(models.Model):  # Model NewsSharesPage
-    id_news_shares = models.AutoField(primary_key=True)
-    id_main_page = models.ForeignKey(Pages, on_delete=models.CASCADE, null=False, blank=False)
-    type_page = models.CharField('TypePage', null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    url_address = models.URLField(max_length=300, null=True, blank=True)
+class NewsSharesPage(models.Model, PhotoValidatorMixin, UrlValidatorMixin):  # Model NewsSharesPage
+    id_main_page = models.ForeignKey(Pages, on_delete=models.CASCADE, null=False, blank=False,
+                                     help_text='Select Page')
+    type_page = models.CharField(choices=TypePageChoices, default=TypePageChoices.NEWS, null=False, blank=False, help_text='Select type Page')
+    description = models.TextField(null=True, blank=True, help_text='Include description to Page')
+    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
+    url_address = models.URLField(null=True, blank=True, help_text='Input url address to Page')
     data_published = models.DateField(default=datetime.now)
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_photo)
+        self.validate_file_size(self.main_photo)
+        self.validate_url(self.url_address)
 
     class Meta:
         abstract = True
-
-
-class TypePage(models.Model):  # Model TypePage
-    id_type_page = models.AutoField(primary_key=True)
-    type = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.type
 
 
 class NewsPage(NewsSharesPage):  # Model NewsPage
@@ -59,124 +68,173 @@ class SharesPage(NewsSharesPage):  # Model SharesPage
 
 
 class CafeBarPage(Pages):  # Model CafeBarPage
-    title = models.CharField(max_length=50, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    menu_cafe_bar = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+    title = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input title')
+    description = models.TextField(null=True, blank=True, help_text='Input description')
+    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
+    menu_cafe_bar = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                      help_text='Upload an image. Supported formats: JPEG, PNG')
 
-    def __str__(self):
-        return self.name_page
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_photo)
+        self.validate_file_size(self.main_photo)
+        self.validate_file_extension(self.menu_cafe_bar)
+        self.validate_file_size(self.menu_cafe_bar)
 
 
 class VipHallPage(Pages):  # Model VipHallPage
-    title = models.CharField(max_length=50, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+    title = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input title')
+    description = models.TextField(null=True, blank=True, help_text='Input description')
+    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
 
-    def __str__(self):
-        return self.name_page
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_photo)
+        self.validate_file_size(self.main_photo)
 
 
 class AdvertisePage(Pages):  # Model AdvertisePage
-    title = models.CharField(max_length=50, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+    title = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input title')
+    description = models.TextField(null=True, blank=True, help_text='Input description')
+    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
 
-    def __str__(self):
-        return self.name_page
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_photo)
+        self.validate_file_size(self.main_photo)
 
 
 class ChildrenRoomPage(Pages):  # Model ChildrenRoomPage
-    title = models.CharField(max_length=50, null=False, blank=False)
-    description = models.TextField(null=True, blank=True)
-    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+    title = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input title')
+    description = models.TextField(null=True, blank=True, help_text='Input description')
+    main_photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.main_photo)
+        self.validate_file_size(self.main_photo)
 
 
 class ContactPage(Pages):  # Model ContactPage
-    id_cinema_contact = models.AutoField(primary_key=True)
-    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
-    name_cinema = models.CharField(max_length=100, null=False, blank=False)
-    address_cinema = models.CharField(max_length=200, null=False, blank=False)
-    location_cinema = models.DecimalField(max_digits=9, decimal_places=6)
+    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                    help_text='Upload an image. Supported formats: JPEG, PNG')
+    name_cinema = models.CharField(validators=[MinLengthValidator(10)], max_length=100, null=False, blank=False, help_text='Input name Cinema')
+    address_cinema = models.CharField(validators=[MinLengthValidator(10)], max_length=200, null=False, blank=False, help_text='Input Address')
+    location_cinema = models.DecimalField(max_digits=9, decimal_places=6, help_text='Input Location')
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.logo_cinema)
+        self.validate_file_size(self.logo_cinema)
+
+
+class Banners(models.Model, UrlValidatorMixin, CounterValidatorMixin):  # Abstract Model Banners
+    name_banner = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input name Banner')
+    status_banner = models.BooleanField(default=True, null=False, blank=False, help_text='Select status Banner')
 
     def __str__(self):
-        return self.name_page
-
-
-class Banners(models.Model):  # Abstract Model Banners
-    id_banner = models.AutoField(primary_key=True)
-    name_banner = models.CharField(max_length=50, null=False, blank=False)
-    status_banner = models.BooleanField(default=True, null=False, blank=False)
-
-    def __str__(self):
-        return f'Banner: {self.name_banner}'
+        return f'{self.name_banner}'
 
     class Meta:
         abstract = True
-        verbose_name = 'Banner'
-        verbose_name_plural = 'Banners'
+        verbose_name = 'banner'
+        verbose_name_plural = 'banners'
 
 
 class HomeBanner(Banners):  # Model HomeBanner
-    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
-    url_banner = models.URLField(max_length=300, null=True, blank=True)
-    text_banner = models.TextField(null=True, blank=True)
-    speed_banner = models.IntegerField(default=5, null=True, blank=True)
+    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                          help_text='Select Gallery to Banner')
+    url_banner = models.URLField(max_length=300, null=True, blank=True, help_text='Input url Banner')
+    text_banner = models.TextField(null=True, blank=True, help_text='Input text to Banner')
+    speed_banner = models.IntegerField(default=5, null=True, blank=True, help_text='Input speed to Banner')
+
+    def clean(self):
+        super().clean()
+        self.validate_url(self.url_banner)
+        self.count_integer(self.speed_banner)
 
 
 class HomeNewsSharesBanner(Banners):  # Model HomeNewsSharesBanner
-    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
-    url_banner = models.URLField(max_length=300, null=True, blank=True)
-    speed_banner = models.IntegerField(default=5, null=True, blank=True)
+    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                          help_text='Select Gallery to Banner')
+    url_banner = models.URLField(max_length=300, null=True, blank=True, help_text='Input url to Banner')
+    speed_banner = models.IntegerField(default=5, null=True, blank=True, help_text='Input speed to Banner')
+
+    def clean(self):
+        super().clean()
+        self.validate_url(self.url_banner)
+        self.count_integer(self.speed_banner)
 
 
 class BackgroundBanner(Banners):  # Model BackgroundBanner
-    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
+    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                          help_text='Select Gallery to Banner')
 
 
-class ContextAdvertise(models.Model):  # Model ContextAdvertise
-    id_context = models.AutoField(primary_key=True)
-    photo_context = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True)
+class ContextAdvertise(models.Model, PhotoValidatorMixin):  # Model ContextAdvertise
+    photo_context = models.ImageField(upload_to='static/photos/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                      help_text='Upload an image. Supported formats: JPEG, PNG')
 
-    class Meta:
-        verbose_name = 'Context'
-        verbose_name_plural = 'Contexts'
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.photo_context)
+        self.validate_file_size(self.photo_context)
 
 
-class MobileApplication(models.Model):  # Model MobileApplication
-    id_application = models.AutoField(primary_key=True)
-    name_application = models.CharField(max_length=50, null=False, blank=False)
-    description_application = models.TextField(null=True, blank=True)
-    gallery_application = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True)
-    url_application = models.URLField(max_length=300, null=True, blank=True)
+class MobileApplication(models.Model, UrlValidatorMixin):  # Model MobileApplication
+    name_application = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input name to Application')
+    description_application = models.TextField(null=True, blank=True, help_text='Input description to Application')
+    gallery_application = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
+                                               help_text='Select Gallery to Application')
+    url_application = models.URLField(max_length=300, null=True, blank=True, help_text='Input url to Application')
+
+    def clean(self):
+        super().clean()
+        self.validate_url(self.url_application)
 
     def __str__(self):
-        return self.name_application
+        return f'{self.name_application}'
 
     class Meta:
-        verbose_name = 'Application'
-        verbose_name_plural = 'Applications'
+        verbose_name = 'application'
+        verbose_name_plural = 'applications'
         ordering = ['name_application']
 
 
-class SocialMedia(models.Model):  # Model SocialMedia
-    id_social = models.AutoField(primary_key=True)
-    name_social = models.CharField(max_length=50, null=False, blank=False)
-    url_social = models.URLField(max_length=300, null=True, blank=True)
+class SocialMedia(models.Model, UrlValidatorMixin):  # Model SocialMedia
+    name_social = models.CharField(validators=[MinLengthValidator(10)], max_length=50, null=False, blank=False, help_text='Input name to Social')
+    url_social = models.URLField(max_length=300, null=True, blank=True, help_text='Input url to Social')
+
+    def clean(self):
+        super().clean()
+        self.validate_url(self.url_social)
 
     def __str__(self):
-        return self.name_social
+        return f'{self.name_social}'
 
     class Meta:
-        verbose_name = 'Application'
-        verbose_name_plural = 'Applications'
+        verbose_name = 'social'
+        verbose_name_plural = 'socials'
         ordering = ['name_social']
 
 
-class MailingTemplates(models.Model):  # Model MailingTemplates
-    id_mailing = models.AutoField(primary_key=True)
-    template_mailing = models.FileField(upload_to='static/mailing/%Y/%m/%d/', editable=False, null=True, blank=True)
+class MailingTemplates(models.Model, PhotoValidatorMixin):  # Model MailingTemplates
+    template_mailing = models.FileField(upload_to='static/mailing/%Y/%m/%d/', editable=False, null=True, blank=True,
+                                        help_text='Upload an file. Supported formats: HTML')
+
+    def clean(self):
+        super().clean()
+        self.validate_file_extension(self.template_mailing)
+        self.validate_file_size(self.template_mailing)
+
+    def __str__(self):
+        return f'{self.template_mailing.name}'
 
     class Meta:
-        verbose_name = 'MailingTemplate'
-        verbose_name_plural = 'MailingTemplates'
+        verbose_name = 'mailing template'
+        verbose_name_plural = 'mailing templates'
+"""
