@@ -1,4 +1,8 @@
-{% extends 'core/base_user_page.html' %}
+{% if request.user.is_superuser %}
+    {% include 'core/base_admin_page.html' %}
+    <h2>home</h2>
+{% else %}
+    {% include 'core/base_user_page.html' %}
 {% load static %}
 
 {% block title %} Головна {% endblock %}
@@ -60,3 +64,4 @@
     </div>
 
 {% endblock content %}
+{% endif %}

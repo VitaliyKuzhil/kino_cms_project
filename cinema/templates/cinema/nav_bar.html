@@ -1,22 +1,72 @@
+<!-- List nav -->
 <ul class="navbar-nav ms-auto">
     {% for item in nav_bar %}
+        <!-- Item -->
         {% if not item.list %}
-            <li class="nav-item">
-                <a href="{% url item.url %}" class="nav-link">
-                    {{ item.title }}
-                </a>
-            </li>
+            {% if item %}
+                <li class="nav-item">
+                    <a href="{% url item.url %}" class="nav-link">
+                        {{ item.title }}
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Item and Dropdown -->
         {% else %}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false"
-                   href="#">{{ item.title }}</a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    {% for sub_item in item.list %}
-                        <a class="dropdown-item" href="{% url sub_item.url %}">{{ sub_item.title }}</a>
-                    {% endfor %}
-                </div>
+
+            {% if item %}
+            <li class="btn-group drop-right">
+                    <!-- Item -->
+                    <a class="nav-link" role="button"
+                       aria-haspopup="true" aria-expanded="false" href="{% url item.url %}">
+                        {{ item.title }}
+                    </a>
+
+                    <!-- Dropdown -->
+                    <button type="button" class="btn dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                        <span class="sr-only"></span>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <ul class="dropdown-menu">
+                        {% for sub_item in item.list %}
+                            {% if sub_item %}
+                            <li class="nav-item">
+                                <a class="dropdown-item" href="{% url sub_item.url %}">{{ sub_item.title }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
             </li>
+                {% endif %}
+                    <!-- And Item and Dropdown -->
         {% endif %}
+        <!-- And Item -->
+
     {% endfor %}
 </ul>
+<!-- End List nav -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+
+        dropdownToggles.forEach((toggle) => {
+            toggle.addEventListener("click", function () {
+                this.nextElementSibling.classList.toggle("show");
+            });
+        });
+
+        const dropdownItems = document.querySelectorAll(".dropdown-item");
+
+        dropdownItems.forEach((item) => {
+            item.addEventListener("click", function () {
+                const url = this.getAttribute("href");
+                if (url && url !== "#") {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+</script>

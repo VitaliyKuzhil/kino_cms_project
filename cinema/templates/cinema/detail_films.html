@@ -1,0 +1,85 @@
+{% if request.user.is_superuser %}
+
+    <!-- Menu for Admin -->
+    {% include 'core/base_admin_page.html' %}
+
+{% else %}
+
+    <!-- Menu for User -->
+    {% include 'core/base_user_page.html' %}
+
+{% endif %}
+<!-- End Include menu -->
+
+<!-- Block content -->
+{% block content %}
+    <h2 class="text-center"> Detail FILM </h2>
+
+    <!-- Content for Admin -->
+    {% if request.user.is_superuser %}
+        <div class="container">
+
+            <!-- Check films -->
+            {% if films %}
+
+                <!-- List films -->
+                <ul>
+                    {% for film in films %}
+                        <li><a href="#">{{ film.name_movie }}
+                            {{ film.description_movie }}
+                            {{ film.type_movie }}
+                            {{ film.main_foto_movie }}
+                            {{ film.status_movie }}
+                            {{ film.url_movie }}
+                            {{ film.gallery_movie }}
+                            {{ film.seo_movie }}
+                            {{ film.data_create_movie }}</a></li>
+                    {% endfor %}
+                </ul>
+                <!-- And list films -->
+
+                <!-- If not Check films-->
+            {% else %}
+                <p>No film available.</p>
+
+            {% endif %}
+            <!-- And Check films -->
+
+        </div>
+
+        <!-- Content for Users and not Auth -->
+    {% else %}
+        <div class="container">
+            <!-- Check film -->
+            {% if film %}
+                <!-- List films -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <h5 class="card-title">{{ film.name_movie|upper }}</h5>
+                            <h6>{{ film.description_movie }}</h6>
+                            <h6>{{ film.type_movie }}</h6>
+                            <h6>{{ film.main_foto_movie }}</h6>
+                            <h6>{{ film.status_movie }}</h6>
+                            <h6>{{ film.url_movie }}</h6>
+                            <h6>{{ film.gallery_movie }}</h6>
+                            <h6>{{ film.seo_movie }}</h6>
+                            <h6>{{ film.data_create_movie }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <!-- End List films -->
+
+                <!-- If not Check films -->
+            {% else %}
+                <p>No film available.</p>
+
+            {% endif %}
+            <!-- And Check films -->
+
+        </div>
+
+    {% endif %}
+
+{% endblock content %}
+<!-- And content -->

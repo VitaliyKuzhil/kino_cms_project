@@ -1,0 +1,389 @@
+{% extends 'core/base_admin_page.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="container text-center">
+        {% if page == home %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=home %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+
+                    <h6>HOME</h6>
+                    {{ home_form.as_p }}
+
+                    <hr>
+
+                    <h6>SEO</h6>
+                    {{ home_seo_form.as_p }}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == about_cinema %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=about_cinema %}"
+                  enctype="multipart/form-data">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>ABOUT CINEMA</h6>
+                    {{ about_cinema_form.as_p }}
+
+                    <h6>Photos</h6>
+                    {{ photo_form_set.management_form }}
+                    <div id="existing-photos">
+                        {% for form in photo_form_set %}
+                            <div class="photo-form">
+                                {{ form.id }}
+                                {{ form.photo }}
+                                {{ form.DELETE }}
+                                {% if form.instance.photo %}
+                                    <img src="{{ form.instance.photo.url }}" alt="Photo"
+                                         data-id="{{ form.instance.id }}">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Блок для додавання нових фотографій -->
+                    <div id="new-photos"></div>
+                    <button type="button" id="add-photo">Add Photo</button>
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ about_cinema_seo_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == cafe_bar %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=cafe_bar %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>CAFE BAR</h6>
+                    {{ cafe_bar_form.as_p }}
+
+                    <h6>Photos</h6>
+                    {% for form in photo_form_set %}
+                        <div class="photo-form">
+                            {{ form.id }}
+                            {{ form.photo }}
+                            {{ form.DELETE }}
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ cafe_bar_seo_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == vip_hall %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=vip_hall %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>VIP HALL</h6>
+                    {{ vip_hall_form.as_p }}
+
+                    <h6>Photos</h6>
+                    {% for form in photo_form_set %}
+                        <div class="photo-form">
+                            {{ form.id }}
+                            {{ form.photo }}
+                            {{ form.DELETE }}
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ vip_hall_seo_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == advertise %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=advertise %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>ADVERTISE</h6>
+                    {{ advertise_form.as_p }}
+
+                    <h6>Photos</h6>
+                    {{ photo_form_set.management_form }}
+                    <div id="existing-photos">
+                        {% for form in photo_form_set %}
+                            <div class="photo">
+                                {{ form.id }}
+                                {{ form.photo }}
+                                <label for="{{ form.DELETE.id_for_label }}">
+                                    {{ form.DELETE }}
+                                    Delete
+                                </label>
+                                <img src="{{ form.instance.photo.url }}" alt="Photo" data-id="{{ form.instance.id }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Блок для додавання нових фотографій -->
+                    <div id="new-photos"></div>
+                    <button type="button" id="add-photo">Add Photo</button>
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ advertise_seo_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == children_room %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=children_room %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <input type="hidden" id="csrf_token" value="{% csrf_token %}">
+                    <h6>CHILDREN ROOM</h6>
+                    {{ children_room_form.as_p }}
+
+                    <h6>Photos</h6>
+                    <main class="app">
+                        <div class="header">
+                            <h2>Upload images</h2>
+                            <div class="server-message">
+
+                            </div>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" multiple="multiple"
+                                   accept="image/png, image/jpeg, image/jpg">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <form id="saved-form">
+                            <div class="header">
+                                <h2> seved in server</h2>
+                                <button type="submit">Delete</button>
+                            </div>
+                            <div class="saved-div">
+
+                            </div>
+                        </form>
+
+                        <form id="queued-form" data-edit-url="{% url 'user:edit_pages' name_page=page %}">
+                            <div class="header">
+                                <h2>queued in frontend</h2>
+                                <button type="submit">Upload</button>
+                            </div>
+                            <div class="queued-div">
+
+                            </div>
+                        </form>
+                    </main>
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ children_room_seo_form.as_p }}
+                </div>
+                <button type="submit" id="change" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% elif page == contacts %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=contacts %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>CONTACTS</h6>
+                    {% for form in contacts_formset %}
+                        {{ form.as_p }}
+                        <hr>
+                    {% endfor %}
+                    <button type="submit">
+                        <a href="{% url 'user:add_contact' name_page=page %}">Add contact</a>
+                    </button>
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ contacts_seo_form }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% else %}
+            <form class="card" method="post" action="{% url 'user:edit_pages' name_page=custom %}">
+                <div class="form-group m-5 mt-2 mb-2">
+                    {% csrf_token %}
+                    <h6>CUSTOM</h6>
+                    {{ custom_form.as_p }}
+                    <hr>
+                    <h6>SEO</h6>
+                    {{ custom_seo_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change</button>
+            </form>
+
+        {% endif %}
+    </div>
+
+    <script>
+        // browse images
+        let queuedImagesArray = [],
+            sevedForm = document.querySelector('#saved-form'),
+            queuedForm = document.querySelector('#queued-form'),
+            savedDiv = document.querySelector('.saved-div'),
+            queuedDiv = document.querySelector('.queued-div'),
+            inputDiv = document.querySelector('.custom-file'),
+            input = document.querySelector('.custom-file input'),
+            serverMassage = document.querySelector('.server-message');
+
+        // delete images
+        let deleteImages = []
+
+        // save images
+
+        // queued images
+        // Add images
+        input.addEventListener('change', () => {
+            const files = input.files
+            // console.log(files)
+            for (let img of files) {
+                queuedImagesArray.push(img)
+            }
+            queuedForm.reset()
+            displayQueuedImages()
+        })
+
+        inputDiv.addEventListener('drop', (ev) => {
+            ev.preventDefault()
+            const files = ev.dataTransfer.files
+            // console.log(files)
+            for (let img of files) {
+                if (!img.type.match('image')) continue
+                if (queuedImagesArray.every(image => image.name !== img.name)) {
+                    queuedImagesArray.push(img)
+                }
+                displayQueuedImages()
+            }
+        })
+
+
+        function displayQueuedImages() {
+            let images = ''
+            queuedImagesArray.forEach((image, index) => {
+                images += `<div class="image">
+                    <img src="${URL.createObjectURL(image)}" alt="image">
+                    <span onclick="deleteQueuedImages(${index})">&times;</span>
+                   </div>`
+            })
+            queuedDiv.innerHTML = images
+        }
+
+        function deleteQueuedImages(index) {
+            delete queuedImagesArray[index]
+            displayQueuedImages()
+        }
+
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        queuedForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('queuedImagesArray', JSON.stringify(queuedImagesArray));
+            console.log(formData)
+
+            const editUrl = queuedForm.getAttribute('data-edit-url');
+            console.log(editUrl)
+
+            fetch(editUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')  // CSRF-токен
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Page updated successfully') {
+                        alert('Photos uploaded successfully');
+                        // Оновлення відображення списку фотографій після збереження
+                        // Додайте код для оновлення відображення
+                    } else {
+                        alert('Error uploading photos');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+
+    </script>
+
+
+    {##}
+    {#<script>#}
+    {#    // Очікування завантаження DOM#}
+    {#    document.addEventListener("DOMContentLoaded", function () {#}
+    {#  const existingPhotosDiv = document.getElementById("existing-photos");#}
+    {#  const newPhotosDiv = document.getElementById("new-photos");#}
+    {#  const addPhotoButton = document.getElementById("add-photo");#}
+    {##}
+    {#  // Додавання лічильника для ідентифікаторів нових фотографій#}
+    {#  let photoCount = {{ photo_form_set|length }};#}
+    {##}
+    {#  // Додавання нового поля для фотографії#}
+    {#  addPhotoButton.addEventListener("click", function () {#}
+    {#    const newPhotoDiv = document.createElement("div");#}
+    {#    newPhotoDiv.classList.add("photo");#}
+    {#    const newPhotoField = document.createElement("input");#}
+    {#    newPhotoField.type = "file";#}
+    {#    newPhotoField.name = `photos-${photoCount}-id`;#}
+    {#    newPhotoField.addEventListener("change", handleFileChange); // Додавання обробника події#}
+    {#    newPhotoDiv.appendChild(newPhotoField);#}
+    {##}
+    {#    const deleteButton = document.createElement("button");#}
+    {#    deleteButton.type = "button";#}
+    {#    deleteButton.classList.add("delete-photo");#}
+    {#    deleteButton.dataset.id = photoCount;#}
+    {#    deleteButton.textContent = "Delete";#}
+    {#    newPhotoDiv.appendChild(deleteButton);#}
+    {##}
+    {#    const previewImage = document.createElement("img");#}
+    {#    const file = newPhotoField.files[0];#}
+    {#    previewImage.classList.add("preview-image");#}
+    {#    previewImage.id = `preview-${photoCount}`;#}
+    {#    previewImage.src = URL.createObjectURL(file); // Встановлюємо src з використанням URL.createObjectURL#}
+    {#    previewImage.style.display = "block"; // Показуємо зображення, якщо воно було приховано#}
+    {#    newPhotoDiv.appendChild(previewImage);  // Додаємо тег <img> до блоку#}
+    {##}
+    {#    newPhotosDiv.appendChild(newPhotoDiv);#}
+    {#    photoCount++;#}
+    {#  });#}
+    {##}
+    {#// Оновлення зображення в елементі <img> при виборі файлу#}
+    {#  function handleFileChange(event) {#}
+    {#    if (event.target && event.target.type === "file") {#}
+    {#      const fileInput = event.target;#}
+    {#      const fileId = fileInput.dataset.id;#}
+    {#      const previewImage = document.getElementById(`preview-${fileId}`);#}
+    {##}
+    {#      // Prevent navigating to the file path#}
+    {#      fileInput.value = "";#}
+    {#    }#}
+    {#  }#}
+    {##}
+    {##}
+    {#  // Видалення фотографії (як наявної, так і нової)#}
+    {#  document.addEventListener("click", function (event) {#}
+    {#    if (event.target.classList.contains("delete-photo")) {#}
+    {#      const photoDiv = event.target.closest(".photo");#}
+    {#      photoDiv.remove();#}
+    {#    }#}
+    {#  });#}
+    {#});#}
+    {##}
+    {#</script>#}
+
+{% endblock content %}

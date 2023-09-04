@@ -1,5 +1,86 @@
-{% extends 'core/base_user_page.html' %}
+{% load static %}
 
+<!-- Include menu -->
+{% if request.user.is_superuser %}
+
+    <!-- Menu for Admin -->
+    {% include 'core/base_admin_page.html' %}
+
+{% else %}
+
+    <!-- Menu for User -->
+    {% include 'core/base_user_page.html' %}
+
+{% endif %}
+<!-- End Include menu -->
+
+<!-- Block content -->
 {% block content %}
-<h2 class="text-center"> FILMS </h2>
+    <h2 class="text-center"> FILMS </h2>
+
+    <!-- Start is_superuser -->
+    {% if request.user.is_superuser %}
+    <div class="container">
+
+    <!-- Check films -->
+        {% if films_old %}
+        <h4>films_old</h4>
+        <!-- List films -->
+        <div class="row">
+            {% for film in films_old %}
+                <div class="col-3">
+                    <div class="card"
+                         style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                        <div class="card-body">
+                            <h6>{{ film.status_movie }}</h6>
+                            <img class="card-img"
+                                 src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
+                                 alt="Photo">
+                            <a class="card-title" href="{% url 'user:edit_films_admin' film.pk %}">{{ film.name_movie|upper }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                    </div>
+                    <div class="row">
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Check films -->
+        {% if films_soon %}
+        <h4>films_soon</h4>
+        <!-- List films -->
+        <div class="row">
+            {% for film in films_soon %}
+                <div class="col-3">
+                    <div class="card"
+                         style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                        <div class="card-body">
+                            <h6>{{ film.status_movie }}</h6>
+                            <img class="card-img"
+                                 src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
+                                 alt="Photo">
+                            <a class="card-title" href="{% url 'user:edit_films_admin' film.pk %}">{{ film.name_movie|upper }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                    </div>
+                    <div class="row">
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <!-- If user -->
+    {% else %}
+        <div class="container">
+            {% block list_films %}
+            {% endblock list_films %}
+        </div>
+    {% endif %}
+    <!-- End is_superuser -->
 {% endblock content %}
+<!-- And content -->

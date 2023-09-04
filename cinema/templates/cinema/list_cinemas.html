@@ -1,5 +1,49 @@
-{% extends 'core/base_user_page.html' %}
+{% if request.user.is_superuser %}
+    {% include 'core/base_admin_page.html' %}
+{% else %}
+    {% include 'core/base_user_page.html' %}
+{% endif %}
 
 {% block content %}
 <h2 class="text-center"> CINEMAS </h2>
+
+{% if request.user.is_superuser %}
+        <div class="container">
+            {% if cinemas %}
+                <ul>
+                    {% for cinema in cinemas %}
+                    <li><a href="#">{{ cinema.name_cinema }}
+                        {{ cinema.description_cinema }}
+                        {{ cinema.logo_cinema }}
+                        {{ cinema.main_foto_cinema }}
+                        {{ cinema.amenities_cinema }}
+                        {{ cinema.gallery_cinema }}
+                        {{ cinema.seo_cinema }}
+                        {{ cinema.data_create_cinema }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No cinema available.</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="container">
+            {% if cinemas %}
+                <ul>
+                    {% for cinema in cinemas %}
+                    <li><a href="#">{{ cinema.name_cinema }}
+                        {{ cinema.description_cinema }}
+                        {{ cinema.logo_cinema }}
+                        {{ cinema.main_foto_cinema }}
+                        {{ cinema.amenities_cinema }}
+                        {{ cinema.gallery_cinema }}
+                        {{ cinema.seo_cinema }}
+                        {{ cinema.data_create_cinema }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No cinema available.</p>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock content %}
