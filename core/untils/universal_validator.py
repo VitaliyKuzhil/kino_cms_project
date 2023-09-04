@@ -6,16 +6,16 @@ import re
 class PhotoValidatorMixin:  # Universal Photo Validator
     @staticmethod
     def validate_file_extension(value):  # Valid extension Image
-        allowed_extensions = ['.jpg', '.jpeg', '.png']
-        if value.name:
-            file_extension = value.name.lower().rsplit('.', 1)[-1]
-            if file_extension not in allowed_extensions:
+        allowed_extensions = ('.jpg', '.jpeg', '.png')
+        if value:
+            file_extension = value.name.rstrip('.')
+            if not file_extension.endswith(allowed_extensions):
                 raise ValidationError(_('Unsupported file format. Please upload a JPEG or PNG image.'))
 
     @staticmethod
     def validate_file_size(value):  # Valid size Image
         max_size = 15 * 1024 * 1024  # 15MB
-        if value.name:
+        if value:
             if value.size > max_size:
                 raise ValidationError(_('The image size exceeds the maximum allowed size of 15MB.'))
 
