@@ -7,8 +7,8 @@ from core.untils.universal_validator import PhotoValidatorMixin, UrlValidatorMix
 
 class Seo(models.Model, UrlValidatorMixin):  # Model SEO
     url_seo = models.URLField(null=True, blank=True, help_text='Input url address SEO')
-    title_seo = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input title SEO')
-    keywords_seo = models.CharField(max_length=400, validators=[SeoValidator.validate_keywords],
+    title_seo = models.CharField(validators=[MinLengthValidator(1)], max_length=300, help_text='Input title SEO')
+    keywords_seo = models.CharField(null=True, blank=True, max_length=400, validators=[SeoValidator.validate_keywords],
                                     help_text='Input keywords SEO')
     description_seo = models.TextField(null=True, blank=True, help_text='Input description SEO')
 
@@ -21,16 +21,23 @@ class Seo(models.Model, UrlValidatorMixin):  # Model SEO
 
 
 class Gallery(models.Model):  # Model Gallery
-    name_gallery = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Gallery')
+    name_gallery = models.CharField(validators=[MinLengthValidator(1)], max_length=300, help_text='Input name Gallery')
 
     def __str__(self):
         return f'{self.name_gallery}'
 
+    class Meta:
+        verbose_name = 'gallery'
+        verbose_name_plural = 'gallerys'
+
 
 class Photos(models.Model, PhotoValidatorMixin):  # Model Photo
     gallery = models.ManyToManyField(Gallery, through='GalleryPhotos', help_text='Select Gallery')
-    photo = models.ImageField(upload_to='static/photos/%Y/%m/%d/',
+    photo = models.ImageField(upload_to='static/photos/',
                               help_text='Upload an image. Supported formats: JPEG, PNG')
+
+    def __str__(self):
+        return f'{self.photo.name}'
 
     def clean(self):
         super().clean()
@@ -46,13 +53,20 @@ class GalleryPhotos(models.Model):  # Connection ManyToMany between Gallery and 
     gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
     photos = models.ForeignKey(Photos, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.gallery} {self.photos}'
+
+    class Meta:
+        verbose_name = 'gallery_photo'
+        verbose_name_plural = 'gallery_photos'
+
 
 class Cinemas(models.Model, PhotoValidatorMixin):  # Model Cinemas
-    name_cinema = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Cinema')
+    name_cinema = models.CharField(validators=[MinLengthValidator(1)], max_length=300, help_text='Input name Cinema')
     description_cinema = models.TextField(null=True, blank=True, help_text='Input description Cinema')
-    logo_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
+    logo_cinema = models.ImageField(upload_to='static/photos/', null=True, blank=True,
                                     help_text='Upload an image. Supported formats: JPEG, PNG')
-    main_foto_cinema = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
+    main_foto_cinema = models.ImageField(upload_to='static/photos/', null=True, blank=True,
                                          help_text='Upload an image. Supported formats: JPEG, PNG')
     amenities_cinema = models.TextField(null=True, blank=True, help_text='Input amenities Cinema')
     gallery_cinema = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
@@ -81,9 +95,9 @@ class Halls(models.Model, PhotoValidatorMixin, CounterValidatorMixin):  # Model 
     cinema_hall = models.ForeignKey(Cinemas, on_delete=models.CASCADE, help_text='Select Cinema to Hall')
     number_hall = models.IntegerField(default=1, help_text='Input number hall')
     description_hall = models.TextField(null=True, blank=True, help_text='Input description hall')
-    photo_shem_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
+    photo_shem_hall = models.ImageField(upload_to='static/photos/', null=True, blank=True,
                                         help_text='Upload an image. Supported formats: JPEG, PNG')
-    main_foto_hall = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
+    main_foto_hall = models.ImageField(upload_to='static/photos/', null=True, blank=True,
                                        help_text='Upload an image. Supported formats: JPEG, PNG')
     count_seats_hall = models.IntegerField(default=1, blank=True, null=True, help_text='Input count seats into hall')
     gallery_hall = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
@@ -113,24 +127,48 @@ class Halls(models.Model, PhotoValidatorMixin, CounterValidatorMixin):  # Model 
 class Rows(models.Model):  # Model Rows
     row_hall = models.ForeignKey(Halls, on_delete=models.CASCADE,
                                  help_text='Select Hall to Row')  # Connection ForeignKey between Halls and Rows
+    number_row = models.PositiveIntegerField(default=1, help_text='Input number row into hall')
+
+    class Meta:
+        verbose_name = 'row'
+        verbose_name_plural = 'rows'
+
+    def __str__(self):
+        return f'{self.number_row}'
 
 
 class Seats(models.Model):  # Model Seats
     seat_row = models.ManyToManyField(Rows, through='SeatsRows', help_text='Select Row to Seat')
+    number_seat = models.PositiveIntegerField(default=1, unique=True, help_text='Input number seat into row')
+
+    class Meta:
+        verbose_name = 'seat'
+        verbose_name_plural = 'seats'
+
+    def __str__(self):
+        return f'{self.number_seat}'
+
+
+class SeatsRows(models.Model):  # Relation between Rows and Seats model
+    row = models.ForeignKey(Rows, on_delete=models.CASCADE, help_text='row')
+    seat = models.ForeignKey(Seats, on_delete=models.CASCADE, help_text='seat')
     status_seat = models.BooleanField(default=False, help_text='Select status Seat')
 
+    def __str__(self):
+        return f'{self.row} {self.seat}'
 
-class SeatsRows(models.Model):  # Connection ManyToMany between Rows and Seats
-    seat = models.ForeignKey(Seats, on_delete=models.CASCADE)
-    row = models.ForeignKey(Rows, on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = 'seat_in_row'
+        verbose_name_plural = 'seats_in_row'
+        unique_together = [['row', 'seat']]
 
 
 class Movies(models.Model, PhotoValidatorMixin, UrlValidatorMixin):  # Model Movies
-    name_movie = models.CharField(validators=[MinLengthValidator(10)], max_length=300, help_text='Input name Movie')
+    name_movie = models.CharField(validators=[MinLengthValidator(1)], max_length=300, help_text='Input name Movie')
     description_movie = models.TextField(null=True, blank=True, help_text='Input description Movie')
     type_movie = models.CharField(choices=TypeMovieChoices.choices, validators=[MovieValidator.validate_check_type],
                                   help_text='Check type Movie')
-    main_foto_movie = models.ImageField(upload_to='static/photos/%Y/%m/%d/', null=True, blank=True,
+    main_foto_movie = models.ImageField(upload_to='static/photos/', null=True, blank=True,
                                         help_text='Upload an image. Supported formats: JPEG, PNG')
     status_movie = models.CharField(null=True, blank=True,
                                     choices=StatusMovieChoices.choices, default=StatusMovieChoices.SOON,

@@ -5,6 +5,7 @@ from .constants import GenderChoices, LANGUAGE_CHOICES, CITY_CHOICES  # Choices
 from phonenumber_field.modelfields import PhoneNumberField  # PhoneNumber
 from creditcards.models import CardNumberField  # CardNumber
 from core.untils.custom_user_validator import UserValidator  # Validator
+from django.core.validators import MinLengthValidator
 
 
 class CustomUserManager(UserManager):
@@ -31,10 +32,12 @@ class CustomUser(AbstractUser):
                               help_text='Select Gender')
     birthday = models.DateField(default=timezone.now, null=True, blank=True,
                                 validators=[UserValidator.birthday_validator], help_text='Select day birthday')
-    language = models.CharField(choices=LANGUAGE_CHOICES, default='English', null=True, blank=True,
+    language = models.CharField(choices=LANGUAGE_CHOICES, default='en', null=True, blank=True,
                                 help_text='Select Language')
     phone = PhoneNumberField(null=True, blank=True, unique=True, help_text='Input Phone number')
     city = models.CharField(choices=CITY_CHOICES, default='washington', null=True, blank=True, help_text='Select City')
+    address = models.CharField(validators=[MinLengthValidator(1)], default='Washington main street', max_length=300,
+                               help_text='Input address', null=True, blank=True)
     number_card = CardNumberField(null=True, blank=True, unique=True, help_text='Input Card number')
 
     USERNAME_FIELD = 'email'
