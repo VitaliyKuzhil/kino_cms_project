@@ -6,3 +6,7 @@ class TypePageChoices(models.TextChoices):
     SHARES = ('shares', 'Shares')
 
 
+STATUS_CHOICES = (
+    (True, 'On'),
+    (False, 'Off'),
+)

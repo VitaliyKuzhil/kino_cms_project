@@ -4,9 +4,9 @@ from geonamescache import GeonamesCache
 
 
 class GenderChoices(models.TextChoices):
-    MALE = ('male', 'Чоловіча')
-    FEMALE = ('female', 'Жіноча')
-    OTHER = ('other', 'Інша')
+    MALE = ('male', 'Male')
+    FEMALE = ('female', 'Female')
+    OTHER = ('other', 'Other')
 
 
 LANGUAGE_CHOICES = [
@@ -14,11 +14,13 @@ LANGUAGE_CHOICES = [
     for code in LANG_INFO
 ]
 
+LANGUAGE_CHOICES.sort(key=lambda x: x[1])
+
 
 def get_city_choices():
     gc = GeonamesCache()
     cities = gc.get_cities()
-    city_choices = [(city['name'].lower(), city['name']) for city in cities.values()]
+    city_choices = sorted([(city['name'].lower(), city['name']) for city in cities.values()])
     return city_choices
 
 
