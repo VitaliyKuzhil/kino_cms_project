@@ -1,0 +1,22 @@
+{% extends 'core/base_admin_page.html' %}
+{% if request.user.is_superuser %}
+    {% block content %}
+        {% if request.user.is_superuser %}
+            <div class="container text-center">
+                <form class="card" method="post" action="{% url 'user:edit_films_admin' film.pk %}"
+                      enctype="multipart/form-data"
+                      data-ajax="false">
+                    <div class="form-group m-5 mt-2 mb-2">
+                        {% csrf_token %}
+                        <h6>Edit Film</h6>
+                        {{ film_form.as_p }}
+                        <hr>
+                        <h6>SEO</h6>
+                        {{ seo_form.as_p }}
+                        <button type="submit" class="btn btn-primary btn-block">update film</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    {% endblock content %}
+{% endif %}

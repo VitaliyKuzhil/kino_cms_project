@@ -1,0 +1,47 @@
+<div class="dropdown language">
+    <a class="dropdown-toggle" id="DropdownLanguage" data-toggle="dropdown" aria-haspopup="true"
+       aria-expanded="false">
+        <i class="flag-icon flag-icon-us"></i> English
+    </a>
+    <div class="dropdown-menu dropdown-menu-right text-center language">
+        <a class="dropdown-item" id="us" href="#"><i class="flag-icon flag-icon-us"> </i>English</a>
+        <a class="dropdown-item" id="fr" href="#"><i class="flag-icon flag-icon-fr"> </i>French</a>
+        <a class="dropdown-item" id="it" href="#"><i class="flag-icon flag-icon-it"> </i>Italian</a>
+        <a class="dropdown-item" id="pl" href="#"><i class="flag-icon flag-icon-pl"> </i>Poland</a>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownToggle = document.getElementById('DropdownLanguage');
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+        // Отримуємо збережену мову з localStorage
+        const savedLanguage = localStorage.getItem('selectedLanguage');
+
+        if (savedLanguage) {
+            const savedLanguageItem = document.getElementById(savedLanguage);
+            if (savedLanguageItem) {
+                const selectedFlag = savedLanguageItem.querySelector('.flag-icon');
+                const selectedLanguage = savedLanguageItem.textContent.trim();
+                dropdownToggle.innerHTML = selectedFlag.outerHTML + ' ' + selectedLanguage;
+            }
+        }
+
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+                const selectedFlag = item.querySelector('.flag-icon');
+                const selectedLanguage = item.textContent.trim();
+
+                dropdownToggle.innerHTML = selectedFlag.outerHTML + ' ' + selectedLanguage;
+
+                const selectedLanguageId = item.getAttribute('id');
+                if (selectedLanguageId) {
+                    localStorage.setItem('selectedLanguage', selectedLanguageId);
+                }
+            });
+        });
+    });
+</script>

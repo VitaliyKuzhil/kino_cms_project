@@ -1,0 +1,125 @@
+<script type="text/javascript">
+$(document).ready(function () {
+  $.validator.setDefaults({
+    submitHandler: function () {
+      $('#registerForm')[0].submit(); // Відправити форму після валідації
+    }
+  });
+  $('#registerForm').validate({
+    rules: {
+      email: {
+        required: true,
+        email: true,
+      },
+      password1: {
+        required: true,
+        minlength: 5
+      },
+      password2: {
+        required: true,
+        minlength: 5,
+        equalTo: "#id_password1", // Змінено на id поля паролю
+      },
+      first_name: {
+        required: true,
+        maxlength: 50,
+        minlength: 5
+      },
+      last_name: {
+        required: true,
+        maxlength: 50,
+        minlength: 5
+      },
+      gender: {
+        required: false
+      },
+      birthday: {
+        required: true
+      },
+      language: {
+        required: true
+      },
+      phone: {
+        required: false,gi
+        minlength: 12,
+        number:true
+      },
+      city: {
+        required: true
+      },
+      address: {
+        required: false,
+        minlength: 5
+      },
+      number_card: {
+        required:false,
+        minlength: 16,
+        maxlength: 16,
+      }
+    },
+    messages: {
+      email: {
+        required: "Please enter an email address",
+        email: "Please enter a valid email address"
+      },
+      password1: {
+        required: "Please provide a password",
+        minlength: "Your password must be at least 5 characters long"
+      },
+      password2: {
+        required: "Please provide a password again",
+        minlength: "Must have min 5 chars",
+        equalTo: "Passwords do not match",
+      },
+      first_name: {
+        required: "Please enter your first name",
+        minlength: "Must have min 5 chars",
+        maxlength: "Maximum length is 50 characters",
+      },
+      errorElement: 'span',
+      last_name: {
+        required: "Please enter your last name",
+        minlength: "Must have min 5 chars",
+        maxlength: "Maximum length is 50 characters"
+      },
+      gender: {
+        required: "Please enter your gender"
+      },
+      birthday: {
+        required: "Please enter your birthday"
+      },
+      language: {
+        required: "Please select your language"
+      },
+      phone: {
+        minlength: "Must have min 12 chars",
+        number: 'Input number',
+        required: "Please input your phone"
+      },
+      city: {
+        required: "Please select your city"
+      },
+      address: {
+        minlength: "Must have min 5 chars",
+        required: "Please select your address"
+      },
+      number_card: {
+        minlength: "Must have min 16 chars",
+        maxlength: "Must have min 16 chars",
+        required: "Please select your number card"
+      }
+    },
+    {#errorElement: 'span',#}
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>

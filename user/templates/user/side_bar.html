@@ -1,4 +1,6 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'core/plugins/fontawesome-free/css/all.min.css' %}">
 
 <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
     {% for item in menu_items %}
