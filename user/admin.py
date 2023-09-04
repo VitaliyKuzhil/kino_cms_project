@@ -3,12 +3,12 @@ from .models import CustomUser
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email', 'phone', 'city',
+    list_display = ['email', 'first_name', 'last_name', 'password', 'phone', 'city', 'address',
                     'gender', 'birthday', 'language', 'number_card']
     search_fields = ['first_name', 'last_name']
     list_filter = ['gender', 'language', 'city']
     # list_editable = []
-    fields = ['first_name', 'last_name', 'email', 'phone', 'city',
+    fields = ['email', 'first_name', 'last_name', 'password', 'phone', 'city', 'address',
               'gender', 'birthday', 'language', 'number_card']
     # readonly_fields = ['create_time', 'update_time']
 

@@ -11,6 +11,12 @@ class SeoAdmin(admin.ModelAdmin):
     # readonly_fields = ['create_time', 'update_time']
 
 
+class PhotosInline(admin.TabularInline):
+    model = Photos.gallery.through
+    extra = 0
+    can_delete = True
+
+
 class GalleryAdmin(admin.ModelAdmin):
     list_display = ['name_gallery']
     search_fields = ['name_gallery']
@@ -18,15 +24,7 @@ class GalleryAdmin(admin.ModelAdmin):
     # list_editable = []
     fields = ['name_gallery']
     # readonly_fields = ['create_time', 'update_time']
-
-
-class PhotosAdmin(admin.ModelAdmin):
-    list_display = ['photo']
-    search_fields = ['gallery']
-    list_filter = ['gallery']
-    # list_editable = []
-    fields = ['photo']
-    # readonly_fields = ['create_time', 'update_time']
+    inlines = [PhotosInline]
 
 
 class CinemasAdmin(admin.ModelAdmin):
@@ -35,20 +33,34 @@ class CinemasAdmin(admin.ModelAdmin):
     search_fields = ['name_cinema']
     list_filter = ['amenities_cinema', 'data_create_cinema']
     # list_editable = []
-    fields = ['name_cinema', 'description_cinema', 'logo_cinema', 'amenities_cinema', 'gallery_cinema',
+    fields = ['name_cinema', 'description_cinema', 'logo_cinema', 'main_foto_cinema', 'amenities_cinema', 'gallery_cinema',
               'seo_cinema']
     # readonly_fields = ['create_time', 'update_time']
 
 
 class HallsAdmin(admin.ModelAdmin):
-    list_display = ['cinema_hall', 'number_hall', 'description_hall', 'photo_shem_hall', 'main_foto_hall',
+    list_display = ['id', 'number_hall', 'cinema_hall', 'description_hall', 'photo_shem_hall', 'main_foto_hall',
                     'count_seats_hall', 'gallery_hall', 'seo_hall', 'data_create_hall']
     search_fields = ['cinema_hall', 'number_hall']
     list_filter = ['count_seats_hall', 'data_create_hall']
     # list_editable = []
-    fields = ['cinema_hall', 'number_hall', 'description_hall', 'photo_shem_hall', 'main_foto_hall',
+    fields = ['number_hall', 'cinema_hall', 'description_hall', 'photo_shem_hall', 'main_foto_hall',
               'count_seats_hall', 'gallery_hall', 'seo_hall']
     # readonly_fields = ['create_time', 'update_time']
+
+
+class SeatsInline(admin.TabularInline):
+    model = Seats.seat_row.through
+    extra = 0
+    can_delete = True
+
+
+class RowsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'number_row', 'row_hall']
+    search_fields = []
+    list_filter = []
+    fields = ['number_row', 'row_hall']
+    inlines = [SeatsInline]
 
 
 class MoviesAdmin(admin.ModelAdmin):
@@ -64,9 +76,11 @@ class MoviesAdmin(admin.ModelAdmin):
 
 admin.site.register(Seo, SeoAdmin)
 admin.site.register(Gallery, GalleryAdmin)
-admin.site.register(Photos, PhotosAdmin)
+admin.site.register(Photos)
 admin.site.register(Cinemas, CinemasAdmin)
 admin.site.register(Halls, HallsAdmin)
+admin.site.register(Rows, RowsAdmin)
+admin.site.register(Seats)
 admin.site.register(Movies, MoviesAdmin)
 
 
