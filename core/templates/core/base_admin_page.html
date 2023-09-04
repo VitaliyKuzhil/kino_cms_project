@@ -1,35 +1,59 @@
 {% extends 'core/main_base_page.html' %}
 {% load static %}
-{% load admin_menu_tags %}
 
+{% if request.user.is_superuser %}
+    <!-- Load menu for admin page -->
+    {% load admin_menu_tags %}
 
-<!-- Block title -->
-<title>{% block title %}Base Admin{% endblock title %}</title>
+    <!-- Block title -->
+    <title>{% block title %}Base Admin{% endblock title %}</title>
 
-<!-- Block menu -->
-{% block menu %}
-    <!-- Sidebar -->
-    <aside class="main-sidebar sidebar-dark-secondary elevation-4">
-        <!-- Brand Logo -->
-        <a href="{% url 'user:statistic' %}" class="brand-link">
-            <img src="{% static 'core/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
-                 class="brand-image img-circle elevation-3"
-                 style="opacity: .8">
-            <span class="brand-text font-weight-light">AdminLTE 3</span>
-        </a>
+    <!-- Block menu -->
+    {% block menu %}
 
-        <div class="sidebar">
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-secondary elevation-4">
+
+            <!--Logo -->
+            <a href="{% url 'user:statistic_admin' %}" class="brand-link">
+                <img src="{% static 'core/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
+                     class="brand-image img-circle elevation-3"
+                     style="opacity: .8">
+                <span class="brand-text font-weight-light">AdminLTE 3</span>
+            </a>
             <!-- Sidebar Menu -->
-            <nav class="mt-2">
+            <div class="sidebar">
+                <nav class="mt-2 text-center">
+
+                    <!-- Menu tag -->
                     {% render_menu_items %}
-            </nav>
+                </nav>
+                <!-- Auth  -->
+                <div class="nav-item">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="{% url 'user:profile_admin' %}" class="nav-link">
+                                {{ request.user.first_name }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'user:logout' %}" class="nav-link">
+                                LogOut
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- And Auth -->
+            </div>
+        </aside>
+    {% endblock menu %}
+    <!-- And menu-->
 
-        </div>
-    </aside>
-{% endblock menu %}
+    <!-- Block content -->
+    {% block content %}{% endblock content %}
 
-<!-- Block content -->
-{% block content %}{% endblock content %}
+    <!-- Block footer -->
+    {% block footer %}{% endblock footer %}
+    <!-- Bootstrap Switch -->
+{% endif %}
 
-<!-- Block footer -->
-{% block footer %}{% endblock footer %}

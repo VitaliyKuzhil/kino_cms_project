@@ -1,5 +1,45 @@
 {% extends 'core/base_admin_page.html' %}
 
 {% block content %}
-<h2 class="text-center"> BANNERS </h2>
+    <h2 class="text-center"> BANNERS </h2>
+    <div class="container">
+        <div class="text-center">
+            <h2>{{ home_banner.name_banner }}</h2>
+            <p>{{ home_banner.status_banner }}</p>
+            <div class="row">
+                {% for gallery_photo in home_banner.gallery_banner.galleryphotos_set.all %}
+                    <div class="col-md-4">
+                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
+                    </div>
+                {% endfor %}
+            </div>
+            <p>{{ home_banner.url_banner }}</p>
+            <p>{{ home_banner.text_banner }}</p>
+            <p>{{ home_banner.speed_banner }}</p>
+        </div>
+    </div>
+    <div class="text-center">
+        <h2>{{ home_news_shares_banner.name_banner }}</h2>
+        <p>{{ home_news_shares_banner.status_banner }}</p>
+            <div class="row">
+                {% for gallery_photo in home_news_shares_banner.gallery_banner.galleryphotos_set.all %}
+                    <div class="col-md-4">
+                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
+                    </div>
+                {% endfor %}
+            </div>
+        <p>{{ home_news_shares_banner.url_banner }}</p>
+        <p>{{ home_news_shares_banner.speed_banner }}</p>
+    </div>
+    <div class="text-center">
+        <h2>{{ background_banner.name_banner }}</h2>
+        <p>{{ background_banner.status_banner }}</p>
+            <div class="row">
+                {% for gallery_photo in background_banner.gallery_banner.galleryphotos_set.all %}
+                    <div class="col-md-4">
+                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
 {% endblock content %}

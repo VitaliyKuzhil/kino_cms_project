@@ -1,0 +1,16 @@
+{% extends 'core/base_admin_page.html' %}
+
+
+{% block content %}
+    <div class="container text-center">
+        <form class="card" method="post" action="{% url 'user:add_contact' name_page=name_page %}" enctype="multipart/form-data"
+              data-ajax="false">
+            <div class="form-group m-5 mt-2 mb-2">
+                {% csrf_token %}
+                <h6>Contact</h6>
+                {{ contact_form.as_p }}
+            <button type="submit" class="btn btn-primary btn-block">Add contact</button>
+    </div>
+    </form>
+    </div>
+{% endblock content %}

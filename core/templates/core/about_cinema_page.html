@@ -1,0 +1,10 @@
+{% if request.user.is_superuser %}
+    {% include 'core/base_admin_page.html' %}
+    {% block content %}
+        <h2 class="text-center"> ABOUT CINEMA </h2>
+    {% endblock content %}
+{% else %}
+    {% include 'core/base_user_page.html' %}
+        <p> Not Info </p>
+{% endif %}
+

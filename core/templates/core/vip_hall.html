@@ -1,0 +1,9 @@
+{% if request.user.is_superuser %}
+    {% include 'core/base_admin_page.html' %}
+{% else %}
+    {% include 'core/base_user_page.html' %}
+{% endif %}
+
+{% block content %}
+<h2 class="text-center"> VIP HALL </h2>
+{% endblock content %}

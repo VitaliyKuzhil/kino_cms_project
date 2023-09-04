@@ -1,0 +1,19 @@
+{% extends 'core/base_admin_page.html' %}
+
+
+{% block content %}
+    <div class="container text-center">
+        <form class="card" method="post" action="{% url 'user:add_news' %}" enctype="multipart/form-data"
+              data-ajax="false">
+            <div class="form-group m-5 mt-2 mb-2">
+                {% csrf_token %}
+                <h6>Create News</h6>
+                {{ news_form.as_p }}
+            <hr>
+            <h6>SEO</h6>
+            {{ seo_form.as_p }}
+            <button type="submit" class="btn btn-primary btn-block">Create news</button>
+    </div>
+    </form>
+    </div>
+{% endblock content %}

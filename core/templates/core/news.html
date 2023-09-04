@@ -1,5 +1,125 @@
-{% extends 'core/base_admin_page.html' %}
+{% if request.user.is_superuser %}
+    {% include 'core/base_admin_page.html' %}
+    {% load static %}
 
-{% block content %}
-<h2 class="text-center"> NEWS </h2>
-{% endblock content %}
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'core/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'core/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+
+
+
+    {% block content %}
+        <h2 class="text-center"> NEWS </h2>
+        {% if request.user.is_superuser %}
+
+            <div class="container">
+
+                {% if news %}
+                    <table id="example4" class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Data Create</th>
+                            <th scope="col"></th>
+                            <th scope="col">
+                                <button type="submit">
+                                    <a href="{% url 'user:add_news' %}">Add news</a>
+                                </button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for new in news %}
+                            <tr>
+                                <td>{{ new.name }}</td>
+                                <td>{{ new.description }}</td>
+                                <td>{{ new.data_published }}</td>
+                                <td>
+                                    <button type="submit">
+                                        <a href="{% url 'user:edit_news' new.pk %}">Edit</a>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button>
+                                        <a href="{% url 'user:delete_news' new.pk %}"
+                                           onclick="return newsDelete()">Delete</a>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p> Not News </p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Підключення jQuery -->
+        <script src="{% static 'core/plugins/jquery/jquery.min.js' %}"></script>
+
+        <!-- DataTables -->
+        <script src="{% static 'core/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'core/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'core/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'core/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+        <script>
+            $(document).ready(function () {
+                $('#example4').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
+                    "columnDefs": [
+                        {"orderable": false, "targets": [3, 4]}
+                    ]
+                });
+            });
+
+
+            function newsDelete() {
+                return confirm('Are you sure you want to delete the new?');
+            }
+        </script>
+    {% endblock content %}
+
+{% else %}
+    {% include 'core/base_user_page.html' %}
+    <div class="container">
+        <h2 class="text-center"> NEWS </h2>
+        {% if news %}
+            <!-- List films -->
+            <div class="row">
+                {% for new in news %}
+                    <div class="col-3">
+                        <div class="card"
+                             style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                            <div class="card-body">
+                                <a class="card-title"
+                                   href="{% url 'cinema:detail_news' new.pk %}">{{ new.name|upper }}</a>
+                                <p class="card-text">{{ new.description|slice:250 }}</p>
+                                <p class="card-text">{{ new.data_published }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                {% endfor %}
+                </div>
+            <!-- End List films -->
+            <!-- If not Check films -->
+        {% else %}
+            <p>No news available.</p>
+        {% endif %}
+        <!-- And Check films -->
+    </div>
+{% endif %}

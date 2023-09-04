@@ -1,4 +1,12 @@
 {% extends 'core/main_base_page.html' %}
+<!-- Load static -->
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'core/plugins/fontawesome-free/css/all.min.css' %}">
+<link rel="stylesheet" href={% static 'core/plugins/flag-icon-css/css/flag-icon.min.css' %}/>
+<link rel="stylesheet" href={% static 'core/plugins/flag-icon-css/css/flag-icon.css' %}/>
+
+<!-- Load menu for cinema page -->
 {% load cinema_menu_tags %}
 
 <!-- Block title -->
@@ -6,58 +14,71 @@
 
 <!-- Block menu -->
 {% block menu %}
+
     <!-- Nav Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container text-center">
-            <div class="row row-cols-auto">
-                <div class="col">
-                    <!-- Brand Logo -->
-                    <a href="{% url 'cinema:home_page' %}" class="navbar-brand">Brand</a>
-                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
-                            data-bs-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+    <nav class=" navbar navbar-expand container-fluid navbar-collapse bg-light">
+
+        <div class="row container-fluid">
+            <div class="col-2 text-center">
+
+                <!-- Logo -->
+                <a href="{% url 'cinema:home_page' %}" class="navbar-brand">Brand</a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
+                        data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <!-- Menu Items -->
+            <div class="col-8">
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <!-- Menu tag -->
+                    {% nav_bar %}
                 </div>
-                <!-- Menu Items -->
-                <div class="col">
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
-                            {% nav_bar %}
-                    </div>
+            </div>
+            <!-- Authenticated -->
+            <div class="col-2 text-center">
+                <div class="col-6">
+                    {% include 'user/language_choice.html' %}
                 </div>
-                <!-- Authenticated -->
-                <div class="col">
-                    {% if not request.user.is_authenticated %}
+                {% if not request.user.is_authenticated %}
+                    <div class="col-6">
                         <div class="nav-item">
-                            <ul class="navbar-nav ms-auto">
+                            <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a href="{% url 'user:login' %}" class="nav-link">
-                                        Увійти
+                                    <a href="{% url 'cinema:login' %}" class="nav-link">
+                                        LogIn
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'user:register' %}" class="nav-link">
-                                        Реєстрація
+                                    <a href="{% url 'cinema:register' %}" class="nav-link">
+                                        Register
                                     </a>
                                 </li>
                                 {% else %}
                                 <li class="nav-item">
-                                    <a href="{% url 'user:profile' %}" class="nav-link">
+                                    <a href="{% url 'cinema:profile_user' %}" class="nav-link">
                                         {{ request.user.first_name }}
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        Вийти
+                                    <a href="{% url 'cinema:logout' %}" class="nav-link">
+                                        LogOut
                                     </a>
                                 </li>
                             </ul>
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
+            <!-- And Authenticated -->
         </div>
+
     </nav>
+    <!-- And Nav Bar  -->
+
 {% endblock menu %}
+<!-- And Block menu -->
 
 <!-- Block content -->
 {% block content %}{% endblock content %}

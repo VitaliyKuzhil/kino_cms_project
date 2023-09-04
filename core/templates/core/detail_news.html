@@ -1,0 +1,13 @@
+{% extends 'core/base_user_page.html' %}
+
+{% block content %}
+        <div class="card">
+            <div class="card-body">
+                <div class="container">
+                    <h5 class="card-title">{{ even.name|upper }}</h5>
+                    <h6>{{ even.data_published }}</h6>
+                    <p class="card-text">{{ even.description }}</p>
+                </div>
+            </div>
+        </div>
+{% endblock content %}
