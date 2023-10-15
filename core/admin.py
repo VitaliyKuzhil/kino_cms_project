@@ -5,7 +5,7 @@ from .models import Pages, HomePage, AboutCinemaPage, NewsPage, SharesPage, Cafe
 
 
 class PagesAdmin(admin.ModelAdmin):
-    list_display = ['name_page', 'gallery_page', 'seo_page', 'status_page', 'data_create_page']
+    list_display = ['name_page', 'gallery_page', 'seo_page', 'status_page', 'id', 'data_create_page']
     search_fields = ['name_page']
     list_filter = ['status_page', 'data_create_page']
     ordering = ['data_create_page']

@@ -1,16 +1,20 @@
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from core.models import HomePage, AboutCinemaPage, CafeBarPage, VipHallPage, AdvertisePage, ChildrenRoomPage, ContactPage, CustomPage, NewsPage, SharesPage
+from core.models import HomePage, AboutCinemaPage, CafeBarPage, VipHallPage, AdvertisePage, ChildrenRoomPage, \
+    ContactPage, CustomPage, NewsPage, SharesPage
 from core.constants import STATUS_CHOICES
 
 
 class HomePageForm(forms.ModelForm):
     phone1 = PhoneNumberField(required=False, label='Phone Number',
-                              widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write phone here'}))
+                              widget=forms.TextInput(
+                                  attrs={'class': 'form-control', 'placeholder': 'Write phone here'}))
     phone2 = PhoneNumberField(required=False, label='Phone Number',
-                              widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write phone here'}))
+                              widget=forms.TextInput(
+                                  attrs={'class': 'form-control', 'placeholder': 'Write phone here'}))
     seo_text = forms.CharField(required=False, label='SEO text',
-                               widget=forms.Textarea(attrs={'class': 'form-control', "rows": '3', 'placeholder': 'Write seo text here'}))
+                               widget=forms.Textarea(
+                                   attrs={'class': 'form-control', "rows": '3', 'placeholder': 'Write seo text here'}))
     status_page = forms.BooleanField(required=False, label="Status page", initial=True,
                                      widget=forms.RadioSelect(choices=STATUS_CHOICES,
                                                               attrs={'class': 'form-check-inline'}))
@@ -22,9 +26,11 @@ class HomePageForm(forms.ModelForm):
 
 class AboutCinemaPageForm(forms.ModelForm):
     name_page = forms.CharField(required=True, max_length=50, label="Page Name",
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
     description = forms.CharField(required=False,
-                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3', 'placeholder': 'Write description here'}))
+                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3',
+                                                               'placeholder': 'Write description here'}))
     main_photo = forms.ImageField(required=False, label="Image",
                                   widget=forms.ClearableFileInput(attrs={'class': 'form-control-file',
                                                                          'id': 'file_id',
@@ -40,9 +46,11 @@ class AboutCinemaPageForm(forms.ModelForm):
 
 class CafeBarPageForm(forms.ModelForm):
     name_page = forms.CharField(required=True, max_length=50, label="Page Name",
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
     description = forms.CharField(required=False,
-                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3', 'placeholder': 'Write description here'}))
+                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3',
+                                                               'placeholder': 'Write description here'}))
     main_photo = forms.ImageField(required=False, label="main_photo",
                                   widget=forms.ClearableFileInput(attrs={'class': 'form-control-file',
                                                                          'id': 'file_id',
@@ -62,9 +70,11 @@ class CafeBarPageForm(forms.ModelForm):
 
 class VipHallPageForm(forms.ModelForm):
     name_page = forms.CharField(required=True, max_length=50, label="Page Name",
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
     description = forms.CharField(required=False,
-                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3', 'placeholder': 'Write description here'}))
+                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3',
+                                                               'placeholder': 'Write description here'}))
     main_photo = forms.ImageField(label="Image",
                                   widget=forms.ClearableFileInput(attrs={'class': 'form-control-file',
                                                                          'id': 'file_id',
@@ -80,10 +90,12 @@ class VipHallPageForm(forms.ModelForm):
 
 class AdvertisePageForm(forms.ModelForm):
     name_page = forms.CharField(required=True, max_length=50, label="Page Name",
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
     description = forms.CharField(required=False,
-                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3', 'placeholder': 'Write description here'}))
-    main_photo = forms.ImageField(label="Image",
+                                  widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '6',
+                                                               'placeholder': 'Write description here'}))
+    main_photo = forms.ImageField(label="Image", required=False,
                                   widget=forms.ClearableFileInput(attrs={'class': 'form-control-file',
                                                                          'id': 'file_id',
                                                                          'placeholder': 'Choice main photo'}))
@@ -98,9 +110,11 @@ class AdvertisePageForm(forms.ModelForm):
 
 class ChildrenRoomPageForm(forms.ModelForm):
     name_page = forms.CharField(required=True, max_length=50, label="Page Name",
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control', 'placeholder': 'Write name page here'}))
     description = forms.CharField(required=False,
-                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3', 'placeholder': 'Write description here'}))
+                                  widget=forms.Textarea(attrs={'class': 'form-control', 'row': '3',
+                                                               'placeholder': 'Write description here'}))
     main_photo = forms.ImageField(required=False, label="Image",
                                   widget=forms.ClearableFileInput(attrs={'class': 'form-control-file',
                                                                          'id': 'file_id',

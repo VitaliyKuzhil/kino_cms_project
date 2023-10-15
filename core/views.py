@@ -1,13 +1,11 @@
-import json
-
 from django.contrib.auth.decorators import permission_required
-from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory, modelformset_factory
+
 from .models import *
 from cinema.models import Photos, GalleryPhotos
 from .forms import *
-from cinema.forms import SeoForm, PhotoForm
+from cinema.forms import SeoForm, PhotosFormSet, PhotoForm
 
 
 # Create your views here.
@@ -196,133 +194,115 @@ def edit_pages(request, name_page):
                    'page': page.name_page, 'home': home.name_page}
 
     elif page.name_page == about_cinema.name_page:
-        photo_form_set = modelformset_factory(Photos, form=PhotoForm, extra=1, can_delete=True)
         if request.method == 'POST':
             about_cinema_form = AboutCinemaPageForm(request.POST or None, instance=about_cinema)
-            photo_form_set = photo_form_set(request.POST or None, request.FILES or None, prefix='photos', queryset=Photos.objects.filter(
-                gallery=about_cinema.gallery_page))
             about_cinema_seo_form = SeoForm(request.POST or None, instance=about_cinema.seo_page)
 
-            if about_cinema_form.is_valid() and photo_form_set.is_valid() and about_cinema_seo_form.is_valid():
+            if about_cinema_form.is_valid() and about_cinema_seo_form.is_valid():
                 about_cinema_form.save()
-                photo_form_set.save()
                 about_cinema_seo_form.save()
         else:
             about_cinema_form = AboutCinemaPageForm(instance=about_cinema)
-            photo_form_set = photo_form_set(prefix='photos', queryset=Photos.objects.filter(gallery=about_cinema.gallery_page))
             about_cinema_seo_form = SeoForm(instance=about_cinema.seo_page)
-        context = {'about_cinema_form': about_cinema_form, 'photo_form_set': photo_form_set, 'about_cinema_seo_form': about_cinema_seo_form,
+        context = {'about_cinema_form': about_cinema_form, 'about_cinema_seo_form': about_cinema_seo_form,
                    'page': page.name_page, 'about_cinema': about_cinema.name_page}
 
     elif page.name_page == cafe_bar.name_page:
-        photo_form_set = modelformset_factory(Photos, form=PhotoForm, extra=1, can_delete=True)
         if request.method == 'POST':
             cafe_bar_form = CafeBarPageForm(request.POST or None, instance=cafe_bar)
-            photo_form_set = photo_form_set(request.POST or None, request.FILES or None, prefix='photos', queryset=Photos.objects.filter(
-                gallery=cafe_bar.gallery_page))
             cafe_bar_seo_form = SeoForm(request.POST or None, instance=cafe_bar.seo_page)
-            if cafe_bar_form.is_valid() and photo_form_set.is_valid() and cafe_bar_seo_form.is_valid():
+            if cafe_bar_form.is_valid() and cafe_bar_seo_form.is_valid():
                 cafe_bar_form.save()
-                photo_form_set.save()
                 cafe_bar_seo_form.save()
         else:
             cafe_bar_form = CafeBarPageForm(instance=cafe_bar)
-            photo_form_set = photo_form_set(prefix='photos', queryset=Photos.objects.filter(
-                gallery=cafe_bar.gallery_page))
             cafe_bar_seo_form = SeoForm(instance=cafe_bar.seo_page)
-        context = {'cafe_bar_form': cafe_bar_form, 'photo_form_set': photo_form_set, 'cafe_bar_seo_form': cafe_bar_seo_form,
+        context = {'cafe_bar_form': cafe_bar_form, 'cafe_bar_seo_form': cafe_bar_seo_form,
                    'page': page.name_page, 'cafe_bar': cafe_bar.name_page}
 
     elif page.name_page == vip_hall.name_page:
-        photo_form_set = modelformset_factory(Photos, form=PhotoForm, extra=1, can_delete=True)
         if request.method == 'POST':
             vip_hall_form = VipHallPageForm(request.POST or None, instance=vip_hall)
-            photo_form_set = photo_form_set(request.POST or None, request.FILES or None, prefix='photos', queryset=Photos.objects.filter(
-                gallery=vip_hall.gallery_page))
             vip_hall_seo_form = SeoForm(request.POST or None, instance=vip_hall.seo_page)
-            if vip_hall_form.is_valid() and photo_form_set.is_valid() and vip_hall_seo_form.is_valid():
+            if vip_hall_form.is_valid() and vip_hall_seo_form.is_valid():
                 vip_hall_form.save()
-                photo_form_set.save()
                 vip_hall_seo_form.save()
         else:
             vip_hall_form = VipHallPageForm(instance=vip_hall)
-            photo_form_set = photo_form_set(prefix='photos', queryset=Photos.objects.filter(
-                gallery=vip_hall.gallery_page))
             vip_hall_seo_form = SeoForm(instance=vip_hall.seo_page)
-        context = {'vip_hall_form': vip_hall_form, 'photo_form_set': photo_form_set, 'vip_hall_seo_form': vip_hall_seo_form,
+        context = {'vip_hall_form': vip_hall_form, 'vip_hall_seo_form': vip_hall_seo_form,
                    'page': page.name_page, 'vip_hall': vip_hall.name_page}
 
     elif page.name_page == advertise.name_page:
-        photo_form_set = modelformset_factory(Photos, form=PhotoForm, extra=1, can_delete=True)
+        # If method POST
         if request.method == 'POST':
-            advertise_form = AdvertisePageForm(request.POST or None, instance=advertise)
-            photo_form_set = photo_form_set(request.POST or None, request.FILES or None, prefix='photos', queryset=Photos.objects.filter(
-                gallery=advertise.gallery_page))
-            advertise_seo_form = SeoForm(request.POST or None, instance=advertise.seo_page)
-            if advertise_form.is_valid() and photo_form_set.is_valid() and advertise_seo_form.is_valid():
+            # print('POST:', request.POST)
+            advertise_form = AdvertisePageForm(request.POST, instance=advertise)
+            formset = PhotosFormSet(request.POST, request.FILES, queryset=Photos.objects.filter(gallery=page.gallery_page))
+            # print(formset)
+            advertise_seo_form = SeoForm(request.POST, instance=advertise.seo_page)
+            # print('FILES:', request.FILES)
+            if advertise_form.is_valid() and advertise_seo_form.is_valid():
+                # Оновити основну інформацію про рекламу
+                advertise_form.save(commit=False)
+
+                # Оновити або створити основне фото (головне зображення)
+                main_photo = request.FILES.get('main_photo')
+                if main_photo:
+                    advertise_form.main_photo = main_photo
+
+                gallery, created = Gallery.objects.get_or_create(name_gallery=f'Gallery for {page.name_page}')
+
+                print('page:', page.pk)
+                print('created:', created)
+                print('gallery', gallery)
+                if created:
+                    advertise.gallery_page = gallery
+                    advertise.save()
+
+                for img_form in formset:
+                    if img_form.is_valid():
+                        img = img_form.save(commit=False)
+                        existing_photo = GalleryPhotos.objects.filter(gallery=gallery, photos__photo=img.photo).first()
+
+                        if not existing_photo:
+                            img.save()  # Зберегти фото, якщо воно не існує
+                            GalleryPhotos.objects.create(gallery=gallery, photos=img)
+
                 advertise_form.save()
-                photo_form_set.save()
+
+                # Зберегти SEO-інформацію
                 advertise_seo_form.save()
-        else:
+        if request.method == 'GET':
             advertise_form = AdvertisePageForm(instance=advertise)
-            photo_form_set = photo_form_set(prefix='photos', queryset=Photos.objects.filter(
-                gallery=advertise.gallery_page))
+            formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=page.gallery_page))
+            # print(formset)
             advertise_seo_form = SeoForm(instance=advertise.seo_page)
-        context = {'advertise_form': advertise_form, 'photo_form_set': photo_form_set, 'advertise_seo_form': advertise_seo_form,
+        context = {'advertise_form': advertise_form, 'formset': formset, 'advertise_seo_form': advertise_seo_form,
                    'page': page.name_page, 'advertise': advertise.name_page}
 
     elif page.name_page == children_room.name_page:
-        photo_form_set = modelformset_factory(Photos, form=PhotoForm, extra=1, can_delete=True)
         if request.method == 'POST':
-            children_room_form = ChildrenRoomPageForm(request.POST or None, instance=children_room)
-            photo_form_set = photo_form_set(request.POST, request.FILES, prefix='photos',
-                                          queryset=Photos.objects.filter(gallery=children_room.gallery_page))
-            children_room_seo_form = SeoForm(request.POST or None, instance=children_room.seo_page)
-            if children_room_form.is_valid() and photo_form_set.is_valid() and children_room_seo_form.is_valid():
+            children_room_form = ChildrenRoomPageForm(request.POST, instance=children_room)
+            formset = PhotosFormSet(request.POST, request.FILES, queryset=Photos.objects.none())
+            children_room_seo_form = SeoForm(request.POST, instance=children_room.seo_page)
+            if children_room_form.is_valid() and formset.is_valid() and children_room_seo_form.is_valid():
                 children_room_form.save()
-
-                # Отримання ID збережених фотографій
-                saved_photo_ids = [form.instance.id for form in photo_form_set]
-
-                # Отримання ID фотографій, які було позначено на видалення
-                deleted_photo_ids = [int(img) for img in request.POST.getlist('deleted_ids')]
-
-                # Збереження нових фотографій з queuedImagesArray
-                queued_images_array = request.POST.get('queuedImagesArray')
-                queued_images_array = json.loads(queued_images_array)
-
-                for image in queued_images_array:
-                    photo = Photos(photo=image, gallery=children_room.gallery_page)
-                    photo.save()
-                    saved_photo_ids.append(photo.id)
-
-                # Видалення фотографій, які було позначено на видалення
-                Photos.objects.filter(id__in=deleted_photo_ids).delete()
-
-                instances = photo_form_set.save(commit=False)
-                for instance in instances:
-                    if instance.DELETE:
-                        instance.delete()
-                    else:
-                        instance.save()
-
                 children_room_seo_form.save()
 
-                return JsonResponse({'message': 'Page updated successfully'}, status=200)
-            else:
-                # Якщо дані невірні, повернемо повідомлення про помилку
-                errors = {
-                    'children_room_form_errors': children_room_form.errors,
-                    'photo_form_set_errors': photo_form_set.errors,
-                    'children_room_seo_form_errors': children_room_seo_form.errors,
-                }
-                return JsonResponse(errors, status=400)
+                for form in formset:
+                    if form.cleaned_data.get('photo'):
+                        img_obj = form.save(commit=False)
+                        img_obj.gallery = children_room.gallery_page
+                        img_obj.save()
+            return redirect('user:list_pages_admin')
         else:
             children_room_form = ChildrenRoomPageForm(instance=children_room)
-            photo_form_set = photo_form_set(queryset=Photos.objects.filter(gallery=page.gallery_page),
-                                          prefix='photos')
+            formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=page.gallery_page))
+
             children_room_seo_form = SeoForm(instance=children_room.seo_page)
-        context = {'children_room_form': children_room_form, 'photo_form_set': photo_form_set, 'children_room_seo_form': children_room_seo_form,
+        context = {'children_room_form': children_room_form, 'formset': formset,
+                   'children_room_seo_form': children_room_seo_form,
                    'page': page.name_page, 'children_room': page.name_page}
 
     elif page.name_page == 'Contacts page':

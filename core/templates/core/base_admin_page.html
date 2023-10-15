@@ -10,50 +10,47 @@
 
     <!-- Block menu -->
     {% block menu %}
-
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-secondary elevation-4">
-
+        <div class="main-sidebar sidebar-dark-secondary elevation-4">
             <!--Logo -->
             <a href="{% url 'user:statistic_admin' %}" class="brand-link">
                 <img src="{% static 'core/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
-                     class="brand-image img-circle elevation-3"
-                     style="opacity: .8">
-                <span class="brand-text font-weight-light">AdminLTE 3</span>
+                     class="brand-image img-circle elevation-3">
+
+                <span class="brand-text font-weight-light">AdminPanel</span>
             </a>
+
+
+            <!-- Auth  -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-block">
+                <div class="nav-item text-center">
+                    <a href="{% url 'user:profile_admin' %}" class="nav-link">
+                        {{ request.user.first_name }}
+                    </a>
+                </div>
+            </div>
+            <!-- And Auth -->
+
+
             <!-- Sidebar Menu -->
             <div class="sidebar">
                 <nav class="mt-2 text-center">
-
                     <!-- Menu tag -->
                     {% render_menu_items %}
                 </nav>
-                <!-- Auth  -->
-                <div class="nav-item">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a href="{% url 'user:profile_admin' %}" class="nav-link">
-                                {{ request.user.first_name }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'user:logout' %}" class="nav-link">
-                                LogOut
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- And Auth -->
             </div>
-        </aside>
+
+            <hr>
+
+            <div class="user-panel mt-3 pb-3 mb-3 d-block">
+                <div class="nav-item text-center">
+                    <a href="{% url 'user:logout' %}" class="nav-link">
+                        LogOut
+                    </a>
+                </div>
+            </div>
+        </div>
     {% endblock menu %}
     <!-- And menu-->
-
-    <!-- Block content -->
-    {% block content %}{% endblock content %}
-
-    <!-- Block footer -->
-    {% block footer %}{% endblock footer %}
-    <!-- Bootstrap Switch -->
 {% endif %}
 
