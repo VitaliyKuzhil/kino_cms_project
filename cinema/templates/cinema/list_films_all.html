@@ -1,6 +1,6 @@
-{%  extends 'cinema/list_films.html' %}
+{%  extends 'core/base_user_page.html' %}
 
-{% block list_films %}
+{% block content %}
 <!-- Check film -->
             {% if films %}
                 <!-- List films -->
@@ -34,4 +34,4 @@
                 <p>No film available.</p>
             {% endif %}
             <!-- And Check films -->
-{%  endblock list_films %}
+{%  endblock content %}

@@ -1,0 +1,81 @@
+{% extends 'core/base_admin_page.html' %}
+{% load static %}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'core/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'core/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+
+{% block section %}
+    <h3 class="text-center"> NEWS </h3>
+
+    <section class="container">
+
+        {% if news %}
+            <table id="news" class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Data Create</th>
+                    <th scope="col"></th>
+                    <th scope="col">
+                        <a role="button" class="btn btn-block btn-success"
+                           href="{% url 'user:add_news' %}">Add news</a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for new in news %}
+                    <tr>
+                        <td>{{ new.name }}</td>
+                        <td>{{ new.description }}</td>
+                        <td>{{ new.data_published }}</td>
+                        <td>
+                            <a role="button" class="btn btn-block btn-dark" href="{% url 'user:edit_news' new.pk %}">Edit</a>
+                        </td>
+                        <td>
+                            <a role="button" class="btn btn-block btn-danger"
+                               href="{% url 'user:delete_news' new.pk %}"
+                               onclick="return newsDelete()">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p> Not News </p>
+        {% endif %}
+    </section>
+
+    <!-- Підключення jQuery -->
+    <script src="{% static 'core/plugins/jquery/jquery.min.js' %}"></script>
+
+    <!-- DataTables -->
+    <script src="{% static 'core/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'core/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'core/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'core/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#news').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "columnDefs": [
+                    {"orderable": false, "targets": [3, 4]}
+                ]
+            });
+        });
+
+
+        function newsDelete() {
+            return confirm('Are you sure you want to delete the new?');
+        }
+    </script>
+{% endblock section %}

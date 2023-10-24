@@ -3,7 +3,7 @@ import datetime
 from creditcards.forms import CardNumberField
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from  cinema.models import Movies
+from cinema.models import Movies
 from .constants import GenderChoices, LANGUAGE_CHOICES, CITY_CHOICES
 from .models import CustomUser
 

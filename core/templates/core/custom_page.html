@@ -1,9 +1,216 @@
+{% load static %}
+
 {% if request.user.is_superuser %}
-    {% include 'core/base_admin_page.html' %}
+    <h3 class="text-center">CUSTOM PAGE</h3>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <form class="card" method="post" action="{% url 'user:edit_pages' name_page=custom %}"
+          enctype="multipart/form-data">
+        <div class="form-group ml-5 mr-5 mt-5 mb-2">
+            {% csrf_token %}
+
+            <!-- Name Page -->
+            <div class="form-group">
+                <label for="name_page">{{ custom_form.name_page.label }}</label>
+                <input type="text" class="form-control" id="name_page"
+                       value="{{ custom_form.instance.name_page }}"
+                       placeholder="{{ custom_form.fields.name_page.widget.attrs.placeholder }}">
+            </div>
+            <!-- End Name Page -->
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-8">
+                        <!-- Description Page -->
+                        <label for="description_page">{{ custom_form.description.label }}</label>
+                        <textarea class="form-control" id="description_page"
+                                  placeholder="{{ custom_form.fields.description.widget.attrs.placeholder }}"
+                                  rows="{{ custom_form.fields.description.widget.attrs.rows }}">{{ children_room_form.instance.description }}</textarea>
+                        <!-- End Description Page -->
+                    </div>
+                    <div class="col-4">
+                        <!-- Image Page -->
+                        <label>{{ custom_form.main_photo.label }}</label>
+                        <div class="card mb-3 align-self-center" style="max-height: inherit">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    {% if custom_form.instance.main_photo %}
+                                        <img class="img-fluid rounded-start" id="photo"
+                                             src="{{ custom_form.instance.main_photo.url }}"
+                                             style="width: inherit; height: inherit">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        {% if custom_form.instance.main_photo %}
+                                            <input type="file" class="custom-file-input" name="main_photo"
+                                                   accept="image/*"
+                                                   id="main_photo" style="display: none;">
+                                            <button type="button"
+                                                    class="btn btn-dark file-upload btn-block"
+                                                    id="upload_main_photo"> Upload
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-danger delete-photo btn-block"
+                                                    id="delete_main_photo"> Delete
+                                            </button>
+                                        {% else %}
+                                            <input type="file" class="custom-file-input" name="main_photo"
+                                                   accept="image/*"
+                                                   id="main_photo" style="display: none;">
+                                            <button type="button"
+                                                    class="btn btn-app file-upload"
+                                                    id="upload_main_photo"> Upload
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Image Page -->
+                </div>
+            </div>
+
+            <!-- Gallery Page -->
+            <div class="form-group">
+                {{ formset.management_form }}
+                <label>Photos</label>
+                <div id="ingredient-form-list" class="row">
+                    {% for form in formset %}
+
+                        <!-- Card Photo -->
+                        <div class="ingredient-form col-3" id="form-{{ forloop.counter }}">
+
+                            <div class="card" style="height: 20em; width: auto">
+
+                                <!-- Image Element -->
+                                <img class="img-responsive align-self-center mt-4"
+                                     src="{{ form.instance.photo.url }}"
+                                     id="img-{{ forloop.counter }}"
+                                     style="height: 50%; width: 40%;">
+
+                                <div class="card-body">
+                                    <!-- Upload Element -->
+                                    <input class="custom-file-input"
+                                           type="file"
+                                           accept="image/*"
+                                           name="{{ form.photo.name }}"
+                                           id="input-{{ forloop.counter }}"
+                                           style="display: none">
+                                    <button type="button"
+                                            class="btn btn-dark file-upload btn-block m-1"
+                                            id="btn-upload-{{ forloop.counter }}"
+                                            data-input="input-{{ forloop.counter }}"> Upload
+                                    </button>
+
+                                    <!-- Delete Element -->
+                                    {% if form.instance.id %}
+                                        <button type="button"
+                                                class="btn btn-danger delete-photo btn-block m-1"
+                                                id="btn-delete-{{ forloop.counter }}"> Delete
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- End Card -->
+
+                            {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                                </div>
+                                <div class="row">
+                            {% endif %}
+                            </div>
+                    {% endfor %}
+                </div>
+                <button type="button"
+                        class="btn btn-primary  btn-block m-1"
+                        id="add-photo"> Add Photo
+                </button>
+            </div>
+            <!-- End Gallery Page -->
+
+            <!-- Empty Form for Gallery -->
+            <div id="empty-form" class="hidden">
+                <div class="card"
+                     style="height: 20em; width: auto">
+                    <!-- Image Element -->
+                    <img class="card-img img-responsive align-self-center mt-4" alt="photo"
+                         style="height: 50%; width: 40%;" src="/media/static/photos/default-150x150.png">
+                    <div class="card-body">
+                        <!-- Upload Element -->
+                        <input class="custom-file-input"
+                               type="file"
+                               name="photo"
+                               accept="image/*"
+                               style="display: none">
+                        <button type="button"
+                                class="btn btn-dark file-upload btn-block m-1"> Upload
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger delete-photo btn-block m-1"> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Empty Form for Gallery -->
+        <hr>
+
+        <!-- Seo Form Group -->
+        <div class="form-group ml-5 mr-5 mt-2 mb-2">
+            <h3 class="text-center">SEO</h3>
+
+            <!-- Url Seo -->
+            <div class="form-group">
+                <label for="url_seo">{{ custom_seo_form.url_seo.label }}</label>
+                <input type="text" class="form-control" id="url_seo"
+                       value="{{ custom_seo_form.instance.url_seo }}"
+                       placeholder="{{ custom_seo_form.fields.url_seo.widget.attrs.placeholder }}">
+            </div>
+            <!-- End Url Seo -->
+
+            <!-- Title Seo -->
+            <div class="form-group">
+                <label for="title_seo">{{ custom_seo_form.title_seo.label }}</label>
+                <input type="text" class="form-control" id="title_seo"
+                       value="{{ custom_seo_form.instance.title_seo }}"
+                       placeholder="{{ custom_seo_form.fields.title_seo.widget.attrs.placeholder }}">
+            </div>
+            <!-- End Title Seo -->
+
+            <!-- Keywords Seo -->
+            <div class="form-group">
+                <label for="keywords_seo">{{ custom_seo_form.keywords_seo.label }}</label>
+                <input type="text" class="form-control" id="keywords_seo"
+                       value="{{ custom_seo_form.instance.keywords_seo }}"
+                       placeholder="{{ custom_seo_form.fields.keywords_seo.widget.attrs.placeholder }}">
+            </div>
+            <!-- End Keywords Seo -->
+
+            <!-- Description Page -->
+            <div class="form-group">
+                <label for="description_seo">{{ custom_seo_form.description_seo.label }}</label>
+                <textarea class="form-control" id="description_seo"
+                          placeholder="{{ custom_seo_form.fields.description_seo.widget.attrs.placeholder }}"
+                          rows="{{ custom_seo_form.fields.description_seo.widget.attrs.rows }}">{{ advertise_seo_form.instance.description_seo }}</textarea>
+            </div>
+            <!-- End Description Page -->
+
+        </div>
+        <!-- End Seo Form Group -->
+
+        <button type="submit" class="btn btn-success btn-block">Save Changes</button>
+    </form>
+
+    <script src="{% static 'core/dist/js/photos.js' %}"></script>
+
 {% else %}
     {% include 'core/base_user_page.html' %}
-{% endif %}
 
-{% block content %}
-<h2 class="text-center"> CUSTOM PAGE </h2>
-{% endblock content %}
+    {% block content %}
+        <h2 class="text-center"> CUSTOM PAGE </h2>
+    {% endblock content %}
+{% endif %}

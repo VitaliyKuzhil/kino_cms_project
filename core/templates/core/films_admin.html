@@ -1,0 +1,62 @@
+{% extends 'core/base_admin_page.html' %}
+
+{% block section %}
+    <h3 class="text-center">FILMS</h3>
+
+    <section class="container">
+
+        <!-- Check films -->
+        {% if films_old %}
+            <h4>films_old</h4>
+            <!-- List films -->
+            <div class="row">
+                {% for film in films_old %}
+                    <div class="col-3">
+                        <div class="card"
+                             style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                            <div class="card-body">
+                                <h6>{{ film.status_movie }}</h6>
+                                <img class="card-img"
+                                     src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
+                                     alt="Photo">
+                                <a class="card-title"
+                                   href="{% url 'user:edit_films_admin' film.pk %}">{{ film.name_movie|upper }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                {% endfor %}
+                </div>
+        {% endif %}
+
+        <!-- Check films -->
+        {% if films_soon %}
+            <h4>films_soon</h4>
+            <!-- List films -->
+            <div class="row">
+                {% for film in films_soon %}
+                    <div class="col-3">
+                        <div class="card"
+                             style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                            <div class="card-body">
+                                <h6>{{ film.status_movie }}</h6>
+                                <img class="card-img"
+                                     src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
+                                     alt="Photo">
+                                <a class="card-title"
+                                   href="{% url 'user:edit_films_admin' film.pk %}">{{ film.name_movie|upper }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                {% endfor %}
+                </div>
+        {% endif %}
+    </section>
+{% endblock section %}

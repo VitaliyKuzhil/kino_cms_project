@@ -1,45 +1,95 @@
 {% extends 'core/base_admin_page.html' %}
+{% load static %}
 
-{% block content %}
-    <h2 class="text-center"> BANNERS </h2>
-    <div class="container">
-        <div class="text-center">
-            <h2>{{ home_banner.name_banner }}</h2>
-            <p>{{ home_banner.status_banner }}</p>
-            <div class="row">
-                {% for gallery_photo in home_banner.gallery_banner.galleryphotos_set.all %}
-                    <div class="col-md-4">
-                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
-                    </div>
-                {% endfor %}
+{% block section %}
+    <h3 class="text-center">BANNERS</h3>
+    <section class="container">
+        <form class="card" method="post" action="{% url 'user:banners_admin' %}"
+              enctype="multipart/form-data">
+
+            <h3 class="text-center"> HOME BANNER TOP </h3>
+
+            {% csrf_token %}
+
+
+            <div class="form-group ml-5 mr-5 mt-5 mb-2">
+                <label for="speed_banner">{{ home_banner_form.speed_banner.label }}</label>
+                <input type="text" class="form-control" id="speed_banner"
+                       value="{{ home_banner_form.instance.speed_banner }}"
+                       placeholder="{{ home_banner_form.fields.speed_banner.widget.attrs.placeholder }}">
             </div>
-            <p>{{ home_banner.url_banner }}</p>
-            <p>{{ home_banner.text_banner }}</p>
-            <p>{{ home_banner.speed_banner }}</p>
-        </div>
-    </div>
-    <div class="text-center">
-        <h2>{{ home_news_shares_banner.name_banner }}</h2>
-        <p>{{ home_news_shares_banner.status_banner }}</p>
-            <div class="row">
-                {% for gallery_photo in home_news_shares_banner.gallery_banner.galleryphotos_set.all %}
-                    <div class="col-md-4">
-                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
-                    </div>
-                {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-block">Save</button>
+        </form>
+
+        <form class="card" method="post" action="{% url 'user:banners_admin' %}"
+              enctype="multipart/form-data">
+
+            <h3 class="text-center"> BACKGROUND BANNER </h3>
+
+            {% csrf_token %}
+
+
+            <div class="form-group ml-5 mr-5 mt-5 mb-2">
+                <label>{{ background_banner_form.image_banner.label }}</label>
+
+                <img class="img-fluid rounded-start" id="image"
+                     src="{{ background_banner_form.instance.image_banner.url }}"
+                     style="width: inherit; height: inherit">
+
+                {% if background_banner_form.instance.image_banner %}
+                    <input type="file" class="custom-file-input" name="image_banner"
+                           accept="image/*"
+                           id="image_banner" style="display: none;">
+                    <button type="button"
+                            class="btn btn-dark file-upload btn-block"
+                            id="upload_photo"> Add
+                    </button>
+                    <button type="button"
+                            class="btn btn-danger delete-photo btn-block"
+                            id="delete_photo"> Delete
+                    </button>
+                {% else %}
+                    <input type="file" class="custom-file-input" name="image_banner"
+                           accept="image/*"
+                           id="image_banner" style="display: none;">
+                    <button type="button"
+                            class="btn btn-dark file-upload btn-block"
+                            id="upload_photo"> Add
+                    </button>
+                {% endif %}
+
             </div>
-        <p>{{ home_news_shares_banner.url_banner }}</p>
-        <p>{{ home_news_shares_banner.speed_banner }}</p>
-    </div>
-    <div class="text-center">
-        <h2>{{ background_banner.name_banner }}</h2>
-        <p>{{ background_banner.status_banner }}</p>
-            <div class="row">
-                {% for gallery_photo in background_banner.gallery_banner.galleryphotos_set.all %}
-                    <div class="col-md-4">
-                        <img src="{{ gallery_photo.photos.photo.url }}" alt="Photo">
-                    </div>
-                {% endfor %}
-            </div>
-    </div>
-{% endblock content %}
+
+            <button type="submit" class="btn btn-primary btn-block">Save</button>
+        </form>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Upload main_photo
+            const upload_photo = document.getElementById('upload_photo')
+            const delete_photo = document.getElementById('delete_photo')
+            const image_banner = document.getElementById('image_banner')
+            const img = document.getElementById('image')
+
+            upload_photo.addEventListener("click", function () {
+                console.log('click upload button')
+                image_banner.click();
+            });
+
+            image_banner.addEventListener("change", function () {
+                const selectedFile = image_banner.files[0];
+
+                if (selectedFile) {
+                    console.log('upload main photo:', selectedFile);
+                    img.setAttribute('src', URL.createObjectURL(selectedFile));
+                }
+            });
+
+            delete_photo.addEventListener('click', function (){
+                console.log('Click delete button')
+            });
+        });
+    </script>
+{% endblock section %}

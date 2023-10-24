@@ -12,6 +12,7 @@ from cinema.models import Movies, Seo
 from .forms import EditFilmPageForm
 from cinema.forms import SeoForm
 from core.models import HomeBanner, HomeNewsSharesBanner, BackgroundBanner
+from core.forms import HomeBannerTopForm, BackgroundBannerForm
 
 
 def register_view(request):
@@ -62,9 +63,14 @@ def banners_view(request):
     home_banner = get_object_or_404(HomeBanner)
     home_news_shares_banner = get_object_or_404(HomeNewsSharesBanner)
     background_banner = get_object_or_404(BackgroundBanner)
-    context = {'home_banner': home_banner,
+
+    if request.method == 'GET':
+        home_banner_form = HomeBannerTopForm(instance=home_banner)
+        background_banner_form = BackgroundBannerForm(instance=background_banner)
+
+    context = {'home_banner_form': home_banner_form,
                'home_news_shares_banner': home_news_shares_banner,
-               'background_banner': background_banner}
+               'background_banner_form': background_banner_form}
     return render(request, 'core/banners.html', context)
 
 
@@ -102,7 +108,7 @@ def list_films(request):
     films_old = Movies.objects.filter(status_movie='old')
     films_soon = Movies.objects.filter(status_movie='soon')
     context = {'films_old': films_old, 'films_soon': films_soon}
-    return render(request, 'cinema/list_films.html', context)
+    return render(request, 'core/films_admin.html', context)
 
 
 @permission_required('is_superuser')

@@ -2,7 +2,8 @@ from django.urls import path, include
 
 from .views import *
 from cinema.views import list_cinemas
-from core.views import news_view, add_news, edit_news, delete_news, shares_view, add_shares, edit_shares, delete_shares, list_pages, create_page, edit_pages, delete_page, add_contact, mailing_view
+from core.views import news_view, add_news, edit_news, delete_news, shares_view, add_shares, edit_shares, \
+    delete_shares, list_pages, create_page, edit_pages, delete_page, add_contact, mailing_view
 
 urlpatterns = [
     path('statistic/', base_admin, name='statistic_admin'),
