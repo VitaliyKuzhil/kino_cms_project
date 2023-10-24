@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory, modelformset_factory
 
 from .models import *
-from cinema.models import Photos, GalleryPhotos
+from cinema.models import Photos, GalleryPhotos, Movies
 from .forms import *
 from cinema.forms import SeoForm, PhotosFormSet, PhotoForm
 
@@ -16,7 +16,10 @@ def base_user(request):
 def news_view(request):
     news = NewsPage.objects.all()
     context = {'news': news}
-    return render(request, 'core/news.html', context)
+    if request.user.is_superuser:
+        return render(request, 'core/news_admin.html', context)
+    else:
+        return render(request, 'core/news_user.html', context)
 
 
 def detail_news(request, pk):
@@ -87,7 +90,10 @@ def advertise_view(request):
 def shares_view(request):
     shares = SharesPage.objects.all()
     context = {'shares': shares}
-    return render(request, 'core/shares.html', context)
+    if request.user.is_superuser:
+        return render(request, 'core/shares_admin.html', context)
+    else:
+        return render(request, 'core/shares_user.html', context)
 
 
 @permission_required('is_superuser')
@@ -236,13 +242,20 @@ def edit_pages(request, name_page):
     elif page.name_page == advertise.name_page:
         # If method POST
         if request.method == 'POST':
-            # print('POST:', request.POST)
+            print('POST: ', request.POST)
+
+            print('FILES:', request.FILES)
+
             advertise_form = AdvertisePageForm(request.POST, instance=advertise)
-            formset = PhotosFormSet(request.POST, request.FILES, queryset=Photos.objects.filter(gallery=page.gallery_page))
-            # print(formset)
+            # print('advertise_form: ', advertise_form)
+
+            formset = PhotosFormSet(request.POST, request.FILES, prefix='photo')
+            print('formset: ', formset)
+
             advertise_seo_form = SeoForm(request.POST, instance=advertise.seo_page)
-            # print('FILES:', request.FILES)
-            if advertise_form.is_valid() and advertise_seo_form.is_valid():
+            # print('advertise_seo_form: ', advertise_seo_form)
+
+            if advertise_form.is_valid() and advertise_seo_form.is_valid() and formset.is_valid():
                 # Оновити основну інформацію про рекламу
                 advertise_form.save(commit=False)
 
@@ -253,31 +266,34 @@ def edit_pages(request, name_page):
 
                 gallery, created = Gallery.objects.get_or_create(name_gallery=f'Gallery for {page.name_page}')
 
-                print('page:', page.pk)
-                print('created:', created)
-                print('gallery', gallery)
+                print('page: ', page.pk)
+                print('created: ', created)
+                print('gallery: ', gallery)
                 if created:
                     advertise.gallery_page = gallery
                     advertise.save()
 
                 for img_form in formset:
-                    if img_form.is_valid():
+                    if img_form.is_valid() and 'photo' in img_form.cleaned_data:
+                        # Опрацьовуйте та зберігайте фото, якщо воно було завантажено
                         img = img_form.save(commit=False)
                         existing_photo = GalleryPhotos.objects.filter(gallery=gallery, photos__photo=img.photo).first()
 
                         if not existing_photo:
-                            img.save()  # Зберегти фото, якщо воно не існує
+                            img.save()
                             GalleryPhotos.objects.create(gallery=gallery, photos=img)
 
                 advertise_form.save()
-
-                # Зберегти SEO-інформацію
                 advertise_seo_form.save()
+
         if request.method == 'GET':
             advertise_form = AdvertisePageForm(instance=advertise)
+            print('Get advertise form: ', advertise)
             formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=page.gallery_page))
-            # print(formset)
+            # print('Get form set: ', formset)
             advertise_seo_form = SeoForm(instance=advertise.seo_page)
+            print('Get seo form: ', advertise_seo_form)
+
         context = {'advertise_form': advertise_form, 'formset': formset, 'advertise_seo_form': advertise_seo_form,
                    'page': page.name_page, 'advertise': advertise.name_page}
 
@@ -337,14 +353,23 @@ def edit_pages(request, name_page):
         custom = CustomPage.objects.get(name_page=name_page)
         if request.method == 'POST':
             custom_form = CustomPageForm(request.POST or None, instance=custom)
+            formset = PhotosFormSet(request.POST, request.FILES, queryset=Photos.objects.none())
             custom_seo_form = SeoForm(request.POST or None, instance=custom.seo_page)
             if custom_form.is_valid() and custom_seo_form.is_valid():
                 custom_form.save()
                 custom_seo_form.save()
-        else:
+
+                for form in formset:
+                    if form.cleaned_data.get('photo'):
+                        img_obj = form.save(commit=False)
+                        img_obj.gallery = children_room.gallery_page
+                        img_obj.save()
+            return redirect('user:list_pages_admin')
+        if request.method == 'GET':
             custom_form = CustomPageForm(instance=custom)
+            formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=page.gallery_page))
             custom_seo_form = SeoForm(instance=custom.seo_page)
-        context = {'custom_form': custom_form, 'custom_seo_form': custom_seo_form,
+        context = {'custom_form': custom_form, 'custom_seo_form': custom_seo_form, 'formset': formset,
                    'page': page.name_page, 'custom': custom.name_page}
 
     return render(request, 'cinema/edit_pages.html', context)

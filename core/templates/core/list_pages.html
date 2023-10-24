@@ -6,54 +6,53 @@
 <link rel="stylesheet" href="{% static 'core/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
 <link rel="stylesheet" href="{% static 'core/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
 
-{% block content %}
-    <h2 class="text-center"> PAGES </h2>
-    <div class="container">
-        {% if pages %}
-            <table id="example2" class="table table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Date create</th>
-                    <th scope="col">Status</th>
-                    <th scope="col"></th>
-                    <th scope="col">
-                        <button type="submit">
-                            <a href="{% url 'user:create_page' %}">Add page</a>
-                        </button>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-
-                {% for page in pages %}
+{% block section %}
+        <h3 class="text-center"> LIST PAGES </h3>
+        <section class="container">
+            {% if pages %}
+                <table id="list-pages" class="table table-hover table-bordered">
+                    <thead>
                     <tr>
-                        <td>{{ page.name_page }}</td>
-                        <td>{{ page.data_create_page }}</td>
-                        <td>{{ page.status_page }}</td>
-                        <td>
-                            <button type="submit">
-                                <a href="{% url 'user:edit_pages' page.name_page %}">Edit</a>
-                            </button>
-                        </td>
-                        <td>
-                            {% if page.custompage %}
-                                <button>
-                                    <a href="{% url 'user:delete_page' page.pk %}"
-                                       onclick="return pageDelete()">Delete</a>
-                                </button>
-                            {% endif %}
-                        </td>
+                        <th scope="col">Name</th>
+                        <th scope="col">Date create</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
+                        <th scope="col">
+                            <a role="button" class="btn btn-success btn-block"
+                               href="{% url 'user:create_page' %}"> Add page
+                            </a>
+                        </th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No pages available.</p>
-        {% endif %}
-    </div>
+                    </thead>
+                    <tbody>
+                    {% for page in pages %}
+                        <tr>
+                            <td>{{ page.name_page }}</td>
+                            <td>{{ page.data_create_page }}</td>
+                            <td>{{ page.status_page }}</td>
+                            <td>
+                                <a role="button"  class="btn btn-dark btn-block"
+                                   href="{% url 'user:edit_pages' page.name_page %}"> Edit
+                                </a>
+                            </td>
+                            <td>
+                                {% if page.custompage %}
+                                    <a role="button" class="btn btn-danger btn-block"
+                                            href="{% url 'user:delete_page' page.pk %}"
+                                            onclick="return pageDelete()"> Delete
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No pages available.</p>
+            {% endif %}
+        </section>
 
-        <!-- Підключення jQuery -->
+    <!-- Підключення jQuery -->
     <script src="{% static 'core/plugins/jquery/jquery.min.js' %}"></script>
 
     <!-- DataTables -->
@@ -63,8 +62,8 @@
     <script src="{% static 'core/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
 
     <script>
-    $(document).ready(function () {
-            $('#example2').DataTable({
+        $(document).ready(function () {
+            $('#list-pages').DataTable({
                 "paging": true,
                 "lengthChange": true,
                 "searching": true,
@@ -83,4 +82,4 @@
             return confirm('Are you sure you want to delete the page?');
         }
     </script>
-{% endblock content %}
+{% endblock section %}

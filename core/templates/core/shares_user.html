@@ -1,5 +1,5 @@
-{% if request.user.is_superuser %}
-    {% include 'core/base_admin_page.html' %}
+{%  %}
+    {% extends 'core/base_admin_page.html' %}
     {% load static %}
 
 
@@ -9,14 +9,14 @@
 
 
 
-    {% block content %}
-        <h2 class="text-center"> NEWS </h2>
+    {% block section %}
+        <h2 class="text-center"> SHARES </h2>
         {% if request.user.is_superuser %}
 
-            <div class="container">
+            <section class="container">
 
-                {% if news %}
-                    <table id="example4" class="table table-hover table-bordered">
+                {% if shares %}
+                    <table id="shares" class="table table-hover table-bordered">
                         <thead>
                         <tr>
                             <th scope="col">Name</th>
@@ -24,38 +24,35 @@
                             <th scope="col">Data Create</th>
                             <th scope="col"></th>
                             <th scope="col">
-                                <button type="submit">
-                                    <a href="{% url 'user:add_news' %}">Add news</a>
-                                </button>
+                                <a role="button" class="btn btn-block btn-success"
+                                   href="{% url 'user:add_shares' %}">Add share</a>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        {% for new in news %}
+                        {% for share in shares %}
                             <tr>
-                                <td>{{ new.name }}</td>
-                                <td>{{ new.description }}</td>
-                                <td>{{ new.data_published }}</td>
+                                <td>{{ share.name }}</td>
+                                <td>{{ share.description }}</td>
+                                <td>{{ share.data_published }}</td>
                                 <td>
-                                    <button type="submit">
-                                        <a href="{% url 'user:edit_news' new.pk %}">Edit</a>
-                                    </button>
+                                    <a role="button" class="btn btn-block btn-dark"
+                                       href="{% url 'user:edit_shares' share.pk %}">Edit</a>
                                 </td>
                                 <td>
-                                    <button>
-                                        <a href="{% url 'user:delete_news' new.pk %}"
-                                           onclick="return newsDelete()">Delete</a>
-                                    </button>
+                                    <a role="button" class="btn btn-block btn-danger"
+                                       href="{% url 'user:delete_shares' share.pk %}"
+                                       onclick="return sharesDelete()">Delete</a>
                                 </td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 {% else %}
-                    <p> Not News </p>
+                    <p> Not Shares </p>
                 {% endif %}
-            </div>
+            </section>
         {% endif %}
 
         <!-- Підключення jQuery -->
@@ -69,7 +66,7 @@
 
         <script>
             $(document).ready(function () {
-                $('#example4').DataTable({
+                $('#shares').DataTable({
                     "paging": true,
                     "lengthChange": true,
                     "searching": true,
@@ -84,28 +81,28 @@
             });
 
 
-            function newsDelete() {
-                return confirm('Are you sure you want to delete the new?');
+            function sharesDelete() {
+                return confirm('Are you sure you want to delete the share?');
             }
         </script>
-    {% endblock content %}
+    {% endblock section %}
 
 {% else %}
     {% include 'core/base_user_page.html' %}
     <div class="container">
-        <h2 class="text-center"> NEWS </h2>
-        {% if news %}
+        <h2 class="text-center"> SHARES </h2>
+        {% if shares %}
             <!-- List films -->
             <div class="row">
-                {% for new in news %}
+                {% for share in shares %}
                     <div class="col-3">
                         <div class="card"
                              style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
                             <div class="card-body">
                                 <a class="card-title"
-                                   href="{% url 'cinema:detail_news' new.pk %}">{{ new.name|upper }}</a>
-                                <p class="card-text">{{ new.description|slice:250 }}</p>
-                                <p class="card-text">{{ new.data_published }}</p>
+                                   href="{% url 'cinema:detail_shares' share.pk %}">{{ share.name|upper }}</a>
+                                <p class="card-text">{{ share.description|slice:250 }}</p>
+                                <p class="card-text">{{ share.data_published }}</p>
                             </div>
                         </div>
                     </div>
@@ -118,7 +115,7 @@
             <!-- End List films -->
             <!-- If not Check films -->
         {% else %}
-            <p>No news available.</p>
+            <p>No shares available.</p>
         {% endif %}
         <!-- And Check films -->
     </div>

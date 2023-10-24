@@ -11,7 +11,7 @@
     <!-- Block menu -->
     {% block menu %}
         <!-- Sidebar -->
-        <div class="main-sidebar sidebar-dark-secondary elevation-4">
+        <div class="main-sidebar sidebar-dark-secondary elevation-4 position-fixed">
             <!--Logo -->
             <a href="{% url 'user:statistic_admin' %}" class="brand-link">
                 <img src="{% static 'core/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
@@ -52,5 +52,16 @@
         </div>
     {% endblock menu %}
     <!-- And menu-->
+
+    {% block content %}
+        <div class="content-wrapper">
+        <a class="btn btn-sm btn-primary position-fixed m-2" data-widget="pushmenu" href="#" role="button">
+            <i class="fas fa-bars"></i> Menu
+        </a>
+        {% block section %}
+
+        {% endblock section %}
+        </div>
+    {% endblock content %}
 {% endif %}
 

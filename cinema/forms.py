@@ -35,7 +35,7 @@ class PhotoForm(forms.ModelForm):
 
 
 PhotosFormSet = modelformset_factory(
-    Photos,
+    model=Photos,
     form=PhotoForm,
     fields=['photo'],
     can_delete=True,
