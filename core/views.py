@@ -2,10 +2,28 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import formset_factory, modelformset_factory
 
-from .models import *
+from core.models import *
 from cinema.models import Photos, GalleryPhotos, Movies
-from .forms import *
+from core.forms import *
 from cinema.forms import SeoForm, PhotosFormSet, PhotoForm
+
+# import log
+import logging
+
+# Create logger
+logger = logging.getLogger("mylogger")
+logger.setLevel(logging.DEBUG)
+
+# Create handler for logger
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+
+# Create format to display
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(formatter)
+
+# Add handler to logger
+logger.addHandler(console_handler)
 
 
 # Create your views here.
@@ -242,42 +260,49 @@ def edit_pages(request, name_page):
     elif page.name_page == advertise.name_page:
         # If method POST
         if request.method == 'POST':
-            print('POST: ', request.POST)
+            logger.info("It's POST response for advertise")
 
-            print('FILES:', request.FILES)
+            logger.info(f'POST: {request.POST}')
 
-            advertise_form = AdvertisePageForm(request.POST, instance=advertise)
+            logger.info(f'FILES: {request.FILES}')
+
+            advertise_form = AdvertisePageForm(request.POST or None, instance=advertise)
             # print('advertise_form: ', advertise_form)
 
-            formset = PhotosFormSet(request.POST, request.FILES, prefix='photo')
-            print('formset: ', formset)
+            formset = PhotosFormSet(request.POST or None, request.FILES or None, prefix='photo')
+            logger.info(f'Formset: {formset}')
 
-            advertise_seo_form = SeoForm(request.POST, instance=advertise.seo_page)
+            advertise_seo_form = SeoForm(request.POST or None, instance=advertise.seo_page)
             # print('advertise_seo_form: ', advertise_seo_form)
 
-            if advertise_form.is_valid() and advertise_seo_form.is_valid() and formset.is_valid():
+            if advertise_form.is_valid() and advertise_seo_form.is_valid():
+                logger.info('isValid')
                 # Оновити основну інформацію про рекламу
                 advertise_form.save(commit=False)
 
                 # Оновити або створити основне фото (головне зображення)
                 main_photo = request.FILES.get('main_photo')
+                logger.info(f'MainPhoto: {main_photo}')
                 if main_photo:
+                    logger.info('Main Photo Change')
                     advertise_form.main_photo = main_photo
 
                 gallery, created = Gallery.objects.get_or_create(name_gallery=f'Gallery for {page.name_page}')
+                logger.info(f'gallery: {gallery}')
 
-                print('page: ', page.pk)
-                print('created: ', created)
-                print('gallery: ', gallery)
+                # print('page: ', page.pk)
+                # print('created: ', created)
+                # print('gallery: ', gallery)
                 if created:
                     advertise.gallery_page = gallery
                     advertise.save()
 
                 for img_form in formset:
-                    if img_form.is_valid() and 'photo' in img_form.cleaned_data:
-                        # Опрацьовуйте та зберігайте фото, якщо воно було завантажено
+                    print('img_form: ', img_form)
+                    if img_form.is_valid():
                         img = img_form.save(commit=False)
                         existing_photo = GalleryPhotos.objects.filter(gallery=gallery, photos__photo=img.photo).first()
+                        print('existing_photo: ', existing_photo)
 
                         if not existing_photo:
                             img.save()
@@ -287,12 +312,16 @@ def edit_pages(request, name_page):
                 advertise_seo_form.save()
 
         if request.method == 'GET':
+            logger.info("It's Get response for advertise")
+
             advertise_form = AdvertisePageForm(instance=advertise)
-            print('Get advertise form: ', advertise)
-            formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=page.gallery_page))
-            # print('Get form set: ', formset)
+            logger.info(f'Get advertise form: {advertise}')
+
+            formset = PhotosFormSet(queryset=Photos.objects.filter(gallery=advertise.gallery_page), prefix='photo')
+            logger.info(f'Get formset: {formset}')
+
             advertise_seo_form = SeoForm(instance=advertise.seo_page)
-            print('Get seo form: ', advertise_seo_form)
+            logger.info(f'Get seo form: {advertise_seo_form}')
 
         context = {'advertise_form': advertise_form, 'formset': formset, 'advertise_seo_form': advertise_seo_form,
                    'page': page.name_page, 'advertise': advertise.name_page}

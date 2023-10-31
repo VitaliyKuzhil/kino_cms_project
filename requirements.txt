@@ -4,6 +4,7 @@ dill==0.3.7
 Django==4.2.1
 django-credit-cards==0.4.1
 django-environ==0.11.2
+django-debug-toolbar==3.7.0
 django-phonenumber-field==7.1.0
 django-phonenumbers==1.0.1
 geonamescache==1.6.0

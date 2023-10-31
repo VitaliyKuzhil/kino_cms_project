@@ -132,11 +132,11 @@ class HomeNewsSharesBannerAdmin(admin.ModelAdmin):
 
 
 class BackgroundBannerAdmin(admin.ModelAdmin):
-    list_display = ['gallery_banner']
+    list_display = ['image_banner']
     search_fields = []
     list_filter = []
     # list_editable = []
-    fields = ['gallery_banner']
+    fields = ['image_banner']
     # readonly_fields = ['create_time', 'update_time']
 
 

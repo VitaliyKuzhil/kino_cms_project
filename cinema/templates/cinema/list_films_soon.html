@@ -1,37 +1,39 @@
 {% extends 'core/base_user_page.html' %}
 
 {% block content %}
-    <!-- Check film -->
-    {% if films %}
-        <!-- List films -->
-        <div class="row">
-            {% for film in films %}
-                <div class="col-3">
-                    <div class="card"
-                         style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
-                        <div class="card-body">
-                            <h6>{{ film.status_movie }}</h6>
-                            <img class="card-img"
-                                 src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
-                                 alt="Photo">
-                            <a class="card-title"
-                               href="{% url 'cinema:detail_film_soon' film.pk %}">{{ film.name_movie|upper }}</a>
+    <section class="container">
+        <!-- Check film -->
+        {% if films %}
+            <!-- List films -->
+            <div class="row">
+                {% for film in films %}
+                    <div class="col-3">
+                        <div class="card"
+                             style="height: 25rem; width: inherit; display: inline-block; margin-right: 10px;">
+                            <div class="card-body">
+                                <h6>{{ film.status_movie }}</h6>
+                                <img class="card-img"
+                                     src="{% if film.main_foto_movie %} {{ film.main_foto_movie.url }} {% else %} /media/static/photos/none_foto.svg {% endif %}"
+                                     alt="Photo">
+                                <a class="card-title"
+                                   href="{% url 'cinema:detail_film_soon' film.pk %}">{{ film.name_movie|upper }}</a>
+                            </div>
+                            <button type="submit" class="btn btn-secondary align-text-bottom">
+                                Bye ticket
+                            </button>
                         </div>
-                        <button type="submit" class="btn btn-secondary align-text-bottom">
-                            Bye ticket
-                        </button>
                     </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                {% endfor %}
                 </div>
-                {% if forloop.counter|divisibleby:4 and not forloop.last %}
-                    </div>
-                    <div class="row">
-                {% endif %}
-            {% endfor %}
-            </div>
-        <!-- End List films -->
-        <!-- If not Check films -->
-    {% else %}
-        <p>No film available.</p>
-    {% endif %}
-    <!-- And Check films -->
+            <!-- End List films -->
+            <!-- If not Check films -->
+        {% else %}
+            <p>No film available.</p>
+        {% endif %}
+        <!-- And Check films -->
+    </section>
 {% endblock content %}

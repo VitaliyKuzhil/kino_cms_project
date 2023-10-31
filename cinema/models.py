@@ -33,7 +33,7 @@ class Gallery(models.Model):  # Model Gallery
 
 class Photos(models.Model, PhotoValidatorMixin):  # Model Photo
     gallery = models.ManyToManyField(Gallery, through='GalleryPhotos', help_text='Select Gallery')
-    photo = models.ImageField(upload_to='static/photos/',
+    photo = models.ImageField(blank=True, null=True, upload_to='static/photos/',
                               help_text='Upload an image. Supported formats: JPEG, PNG')
 
     def __str__(self):

@@ -16,7 +16,9 @@ import environ
 from pathlib import Path
 
 # init environ
-env = environ.Env()
+env = environ.Env(
+    DEBUG=(bool, True)
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar', # for DJANGO DEBUG TOOLBAR
+    'django_extensions',
     'core.apps.CoreConfig',  # Add new application into the project
     'cinema.apps.CinemaConfig',  # Add new application into the project
     'user.apps.UserConfig'  # Add new application into the project
@@ -57,6 +61,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+# For debug Toolbar
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 ROOT_URLCONF = 'kino_cms.urls'

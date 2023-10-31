@@ -311,8 +311,8 @@ class HomeNewsSharesBanner(Banners):  # Model HomeNewsSharesBanner
 
 
 class BackgroundBanner(Banners):  # Model BackgroundBanner
-    gallery_banner = models.OneToOneField(Gallery, on_delete=models.CASCADE, blank=True, null=True,
-                                          help_text='Select Gallery to Banner')
+    image_banner = models.ImageField(upload_to='static/photos/', null=True, blank=True,
+                                   help_text='Upload an image. Supported formats: JPEG, PNG')
 
     class Meta:
         verbose_name = 'background banner'

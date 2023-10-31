@@ -20,6 +20,7 @@ from django.urls import path, include
 from kino_cms import settings
 
 urlpatterns = [
+    path('debug/', include('debug_toolbar.urls')),
     path('adminlte/', include(('user.urls', 'user'), namespace='user'), name='user'),
     path('', include(('cinema.urls', 'cinema'), namespace='cinema'), name='cinema'),
     path('core/', include(('core.urls', 'core'), namespace='core'), name='core'),

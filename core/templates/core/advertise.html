@@ -10,9 +10,8 @@
 
     <form class="card" method="post" action="{% url 'user:edit_pages' name_page=advertise %}"
           enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="form-group ml-5 mr-5 mt-5 mb-2">
-            {% csrf_token %}
-
             <!-- Name Page -->
             <div class="form-group">
                 <label for="name_page">{{ advertise_form.name_page.label }}</label>
@@ -45,8 +44,9 @@
                                 <div class="col-md-8">
                                     <div class="card-body">
                                         {% if advertise_form.instance.main_photo %}
-                                            <input type="file" class="custom-file-input" name="main_photo"
+                                            <input type="file" class="custom-file-input"
                                                    accept="image/*"
+                                                   name="main_photo"
                                                    id="main_photo" style="display: none;">
                                             <button type="button"
                                                     class="btn btn-dark file-upload btn-block"
@@ -57,7 +57,8 @@
                                                     id="delete_main_photo"> Delete
                                             </button>
                                         {% else %}
-                                            <input type="file" class="custom-file-input" name="main_photo"
+                                            <input type="file" class="custom-file-input"
+                                                   name="main_photo"
                                                    accept="image/*"
                                                    id="main_photo" style="display: none;">
                                             <button type="button"
@@ -91,6 +92,7 @@
                                      src="{{ form.instance.photo.url }}"
                                      data-id="{{ form.instance.id }}"
                                      id="img-{{ forloop.counter }}"
+                                     alt="photo"
                                      style="height: 50%; width: 40%;">
 
                                 <div class="card-body">
@@ -98,7 +100,6 @@
                                     <input class="custom-file-input"
                                            type="file"
                                            accept="image/*"
-                                           name="{{ form.photo.name }}"
                                            id="input-{{ forloop.counter }}"
                                            style="display: none">
                                     <button type="button"
@@ -108,12 +109,10 @@
                                     </button>
 
                                     <!-- Delete Element -->
-                                    {% if form.instance.id %}
-                                        <button type="button"
-                                                class="btn btn-danger delete-photo btn-block m-1"
-                                                id="btn-delete-{{ forloop.counter }}"> Delete
-                                        </button>
-                                    {% endif %}
+                                    <button type="button"
+                                            class="btn btn-danger delete-photo btn-block m-1"
+                                            id="btn-delete-{{ forloop.counter }}"> Delete
+                                    </button>
                                 </div>
                             </div>
                             <!-- End Card -->
@@ -143,7 +142,6 @@
                         <!-- Upload Element -->
                         <input class="custom-file-input"
                                type="file"
-                               name="photo"
                                accept="image/*"
                                style="display: none">
                         <button type="button"

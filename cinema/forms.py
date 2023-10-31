@@ -28,7 +28,7 @@ class GalleryForm(forms.ModelForm):
 class PhotoForm(forms.ModelForm):
     photo = forms.ImageField(required=False,
                              label="Image",
-                             widget=forms.ClearableFileInput(attrs={'class': 'form-control-file', 'id': 'file_id', 'placeholder': 'Choice main photo'}))
+                             widget=forms.ClearableFileInput(attrs={'class': 'form-control-file', 'id': 'file_id', 'placeholder': 'Choice photo'}))
     class Meta:
         model = Photos
         fields = ['photo']
@@ -41,7 +41,7 @@ PhotosFormSet = modelformset_factory(
     can_delete=True,
     extra=0,
     widgets={
-        'photo': forms.ClearableFileInput(
+        'photos': forms.ClearableFileInput(
             attrs={'class': 'form-control-file',
                    'placeholder': 'Choice photo'}
         )

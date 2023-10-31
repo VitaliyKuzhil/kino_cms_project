@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add new photo to gallery
     const addPhotoButton = document.getElementById('add-photo')
-    const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+    const totalFormsInput = document.getElementById('id_photo-TOTAL_FORMS');
     let totalForms = totalFormsInput ? parseInt(totalFormsInput.value) : 0;
     //console.log("totalFormsInput: ", totalFormsInput.value)
 
@@ -71,31 +71,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     ListTarget.addEventListener('click', function (event) {
-            const target = event.target
-            console.log('target: ', target)
+        const target = event.target
+        console.log('target: ', target)
 
-            if (target.id.startsWith(`btn-upload`)) {
+        if (target.id.startsWith(`btn-upload`)) {
 
-                const inputId = target.id.replace('btn-upload-', '');
-                console.log('inputId: ', inputId)
-                const uploadInput = document.getElementById(`input-${inputId}`);
-                console.log('uploadInput: ', uploadInput)
-                uploadInput.click()
+            const inputId = target.id.replace('btn-upload-', '');
+            console.log('inputId: ', inputId)
+            const uploadInput = document.getElementById(`input-${inputId}`);
+            console.log('uploadInput: ', uploadInput)
+            uploadInput.click()
 
-                uploadInput.addEventListener("change", function () {
+            uploadInput.addEventListener("change", function () {
 
-                    const selectedFile = uploadInput.files[0];
+                const selectedFile = uploadInput.files[0];
 
-                    if (selectedFile) {
-                        const formData = new FormData();
-                        formData.append('photo', selectedFile);
+                if (selectedFile) {
+                    const formData = new FormData();
+                    formData.append('photo', selectedFile);
 
-                        console.log('Upload photo:', selectedFile);
+                    console.log('Upload photo:', selectedFile);
 
-                        const uploadImage = document.getElementById(`img-${inputId}`);
-                        uploadImage.setAttribute('src', URL.createObjectURL(selectedFile));
-                    }
-                })
-            }
-        });
+                    const uploadImage = document.getElementById(`img-${inputId}`);
+                    uploadImage.setAttribute('src', URL.createObjectURL(selectedFile));
+                }
+            })
+        }
+    });
 });
